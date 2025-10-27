@@ -11,7 +11,7 @@ object DatabaseFactory {
         val config = ConfigFactory.load()
         
         // Read from environment variables first, then config file
-        val dbUrl = System.getenv("DATABASE_URL") 
+        var dbUrl = System.getenv("DATABASE_URL") 
             ?: (if (config.hasPath("database.url")) config.getString("database.url") else null)
         val dbUser = System.getenv("DATABASE_USER") 
             ?: (if (config.hasPath("database.user")) config.getString("database.user") else "postgres")
@@ -21,6 +21,13 @@ object DatabaseFactory {
         
         // Validate required fields
         requireNotNull(dbUrl) { "DATABASE_URL environment variable or database.url config is required" }
+        
+        // Convert Railway's postgresql:// format to jdbc:postgresql:// if needed
+        if (dbUrl.startsWith("postgresql://")) {
+            dbUrl = dbUrl.replace("postgresql://", "jdbc:postgresql://")
+        } else if (!dbUrl.startsWith("jdbc:postgresql://")) {
+            throw IllegalArgumentException("DATABASE_URL must be in format 'postgresql://...' or 'jdbc:postgresql://...'")
+        }
         
         val hikariConfig = HikariConfig().apply {
             jdbcUrl = dbUrl
