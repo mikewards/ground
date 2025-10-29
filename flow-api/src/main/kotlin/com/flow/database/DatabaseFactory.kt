@@ -11,12 +11,13 @@ object DatabaseFactory {
         val config = ConfigFactory.load()
         
         // Read from environment variables first, then config file
-        var dbUrl = System.getenv("DATABASE_URL") 
-            ?: (if (config.hasPath("database.url")) config.getString("database.url") else null)
-        val dbUser = System.getenv("DATABASE_USER") 
-            ?: (if (config.hasPath("database.user")) config.getString("database.user") else "postgres")
-        val dbPassword = System.getenv("DATABASE_PASSWORD") 
-            ?: (if (config.hasPath("database.password")) config.getString("database.password") else "")
+        // Trim all values to handle accidental whitespace from Railway UI
+        var dbUrl = System.getenv("DATABASE_URL")?.trim()
+            ?: (if (config.hasPath("database.url")) config.getString("database.url").trim() else null)
+        val dbUser = System.getenv("DATABASE_USER")?.trim()
+            ?: (if (config.hasPath("database.user")) config.getString("database.user").trim() else "postgres")
+        val dbPassword = System.getenv("DATABASE_PASSWORD")?.trim()
+            ?: (if (config.hasPath("database.password")) config.getString("database.password").trim() else "")
         val maxPoolSize = if (config.hasPath("database.maxPoolSize")) config.getInt("database.maxPoolSize") else 10
         
         // Validate required fields
