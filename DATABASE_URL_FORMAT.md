@@ -56,8 +56,19 @@ postgres:password@flow-db.railway.internal
 
 1. **Missing `postgresql://` prefix** - Make sure it starts with `postgresql://`
 2. **Only copying part of the URL** - Copy the entire value
-3. **Adding extra spaces** - No spaces in the URL
+3. **Leading/trailing spaces** - Remove any spaces before or after the URL when pasting
 4. **Using placeholder text** - Must be the actual value from PostgreSQL service
+
+### Removing Spaces
+
+If you see spaces in your `DATABASE_URL` (like `   postgresql://...`), **remove them**:
+
+1. **Edit** the variable in Railway
+2. **Select all** the text
+3. **Delete** any spaces at the beginning or end
+4. **Save**
+
+The code will automatically trim spaces, but it's best to remove them in Railway to avoid confusion.
 
 ## Verify
 
