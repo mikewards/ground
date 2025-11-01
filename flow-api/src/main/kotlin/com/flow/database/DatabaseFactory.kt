@@ -28,8 +28,9 @@ object DatabaseFactory {
         
         // Validate required fields
         requireNotNull(dbUrl) { 
-            "❌ DATABASE_URL is missing! Please set DATABASE_URL in Railway (flow-platform service → Variables). " +
-            "Copy the value from flow-db service → Variables → DATABASE_URL"
+            "❌ DATABASE_URL is missing! Railway should auto-set this when PostgreSQL service is linked. " +
+            "Go to flow-platform → Settings → Service Dependencies → Add flow-db service. " +
+            "Railway will automatically set DATABASE_URL."
         }
         
         // Convert Railway's postgresql:// format to jdbc:postgresql:// if needed
