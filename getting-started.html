@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Getting Started - Flow</title>
+    <title>Getting Started - TBD</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="api-styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,15 +17,9 @@
             <div class="nav-content">
                 <a href="index.html" class="logo">
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 2L30 8V16C30 23.732 23.732 30 16 30C8.268 30 2 23.732 2 16V8L16 2Z" fill="url(#gradient)" stroke="currentColor" stroke-width="2"/>
-                        <defs>
-                            <linearGradient id="gradient" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#6366F1"/>
-                                <stop offset="1" stop-color="#8B5CF6"/>
-                            </linearGradient>
-                        </defs>
+                        <path d="M16 4L28 20H20V28H12V20H4L16 4Z" fill="#0F172A"/>
                     </svg>
-                    <span class="logo-text">Flow</span>
+                    <span class="logo-text">TBD</span>
                 </a>
                 <div class="nav-links">
                     <a href="guides.html">Guides</a>
@@ -72,7 +66,7 @@
             <div class="api-header-content">
                 <h1>Getting Started</h1>
                 <p class="api-subtitle">
-                    Get up and running with Flow APIs in minutes. Create an account, generate an access token, and make your first API call.
+                    Get up and running with TBD APIs in minutes. Create an account, generate an access token, and make your first API call.
                 </p>
             </div>
         </div>
@@ -100,13 +94,13 @@
                         <div class="step-number">1</div>
                         <div class="step-content">
                             <h2>Create Your Account</h2>
-                            <p>Start by creating a Flow developer account. You'll need a username and password.</p>
+                            <p>Start by creating a TBD developer account. You'll need a username and password.</p>
                             
                             <div class="code-example-box">
                                 <div class="code-header">
                                     <span>cURL</span>
                                 </div>
-                                <pre><code>curl https://api.flow.com/v1/accounts \
+                                <pre><code>curl https://api.tbd.com/v1/accounts \
   -X POST \
   -H "Content-Type: application/json" \
   -d '{
@@ -144,7 +138,7 @@
                                 <div class="code-header">
                                     <span>cURL</span>
                                 </div>
-                                <pre><code>curl https://api.flow.com/v1/auth/authenticate \
+                                <pre><code>curl https://api.tbd.com/v1/auth/authenticate \
   -X POST \
   -H "Content-Type: application/json" \
   -d '{
@@ -168,7 +162,7 @@
                                 <div class="code-header">
                                     <span>cURL</span>
                                 </div>
-                                <pre><code>curl https://api.flow.com/v1/access-tokens \
+                                <pre><code>curl https://api.tbd.com/v1/access-tokens \
   -X POST \
   -H "Authorization: Bearer sk_live_temp_..." \
   -H "Content-Type: application/json" \
@@ -206,7 +200,7 @@
                                 <div class="code-header">
                                     <span>cURL</span>
                                 </div>
-                                <pre><code>curl https://api.flow.com/v1/yield/accounts \
+                                <pre><code>curl https://api.tbd.com/v1/yield/accounts \
   -X POST \
   -H "Authorization: Bearer sk_live_1234567890abcdef" \
   -H "Content-Type: application/json" \
@@ -237,7 +231,7 @@
                             </div>
 
                             <p class="success-note">
-                                <strong>🎉 Success!</strong> You've created your first yield account. Your funds are now earning 6% annual yield through Flow's integration with Morpho and Aave protocols.
+                                <strong>🎉 Success!</strong> You've created your first yield account. Your funds are now earning 6% annual yield through TBD.s integration with Morpho and Aave protocols.
                             </p>
                         </div>
                     </section>
@@ -282,13 +276,13 @@
                         <h3>Base URL</h3>
                         <p>All API requests should be made to:</p>
                         <div class="code-example-box">
-                            <pre><code>https://api.flow.com</code></pre>
+                            <pre><code>https://api.tbd.com</code></pre>
                         </div>
 
                         <h3>API Versioning</h3>
-                        <p>Flow APIs are versioned. The current version is <code>2025-01-15</code>. Include the version in your API path:</p>
+                        <p>TBD APIs are versioned. The current version is <code>2025-01-15</code>. Include the version in your API path:</p>
                         <div class="code-example-box">
-                            <pre><code>https://api.flow.com/v1/yield/accounts</code></pre>
+                            <pre><code>https://api.tbd.com/v1/yield/accounts</code></pre>
                         </div>
                     </section>
                 </main>
@@ -303,13 +297,7 @@
                 <div class="footer-section">
                     <div class="footer-logo">
                         <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M16 2L30 8V16C30 23.732 23.732 30 16 30C8.268 30 2 23.732 2 16V8L16 2Z" fill="url(#gradient)" stroke="currentColor" stroke-width="2"/>
-                            <defs>
-                                <linearGradient id="gradient" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
-                                    <stop stop-color="#6366F1"/>
-                                    <stop offset="1" stop-color="#8B5CF6"/>
-                                </linearGradient>
-                            </defs>
+                            <path d="M16 4L28 20H20V28H12V20H4L16 4Z" fill="#0F172A"/>
                         </svg>
                         <span>Flow</span>
                     </div>
