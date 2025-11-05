@@ -231,7 +231,6 @@
 .action-method {
     display: inline-block;
     padding: 4px 8px;
-    background: var(--primary);
     color: white;
     font-size: 12px;
     font-weight: 700;
@@ -239,6 +238,33 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     width: fit-content;
+}
+
+/* HTTP Method Colors - CRUD Actions */
+/* POST - Green (Create) */
+.action-method.post,
+.action-method[data-method="POST"] {
+    background: #10B981;
+}
+
+/* GET - Blue (Read) */
+.action-method.get,
+.action-method[data-method="GET"] {
+    background: #3B82F6;
+}
+
+/* PUT/PATCH - Yellow (Update) */
+.action-method.put,
+.action-method.patch,
+.action-method[data-method="PUT"],
+.action-method[data-method="PATCH"] {
+    background: #F59E0B;
+}
+
+/* DELETE - Red (Delete) */
+.action-method.delete,
+.action-method[data-method="DELETE"] {
+    background: #EF4444;
 }
 
 .action-path {
