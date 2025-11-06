@@ -592,380 +592,158 @@
     </nav>
 
     <!-- Guides Content -->
-    <section class="api-content">
-        <div class="container">
-            <div class="api-header-content" style="margin-bottom: 48px;">
-                <h1>TBD Platform Guides</h1>
-                <p class="api-subtitle">Complete documentation for building with TBD. Learn core concepts, explore domain guides, and discover common integration patterns.</p>
+    <div class="guides-container">
+        <div class="guides-header">
+            <h1>TBD Platform Guides</h1>
+            <p>Complete documentation for building with TBD. Learn core concepts, explore domain guides, and discover common integration patterns.</p>
+        </div>
+        
+        <div class="getting-started-layout">
+            <aside class="getting-started-sidebar">
+                <div class="sidebar-section">
+                    <h3>Quick Start</h3>
+                    <ul class="sidebar-list">
+                        <li><a href="#quickstart-step1">1. Create Account</a></li>
+                        <li><a href="#quickstart-step2">2. Generate Token</a></li>
+                        <li><a href="#quickstart-step3">3. Make API Call</a></li>
+                        <li><a href="#quickstart-step4">4. Next Steps</a></li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <h3>Core Concepts</h3>
+                    <ul class="sidebar-list">
+                        <li><a href="#core-accounts">Accounts & Authentication</a></li>
+                        <li><a href="#core-applications">Applications & API Keys</a></li>
+                        <li><a href="#core-wallets">Wallets</a></li>
+                        <li><a href="#core-yield">Yield Accounts</a></li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <h3>Domain Guides</h3>
+                    <ul class="sidebar-list">
+                        <li><a href="#domain-accounts">Accounts</a></li>
+                        <li><a href="#domain-applications">Applications</a></li>
+                        <li><a href="#domain-wallets">Wallets</a></li>
+                        <li><a href="#domain-yield">Yield Accounts</a></li>
+                        <li><a href="#domain-positions">Positions</a></li>
+                        <li><a href="#domain-markets">Markets</a></li>
+                        <li><a href="#domain-transactions">Transactions</a></li>
+                        <li><a href="#domain-webhooks">Webhooks</a></li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <h3>Common Flows</h3>
+                    <ul class="sidebar-list">
+                        <li><a href="#flow-first-time">First-Time Setup</a></li>
+                        <li><a href="#flow-production">Production Deployment</a></li>
+                        <li><a href="#flow-multi-currency">Multi-Currency Portfolio</a></li>
+                        <li><a href="#flow-automated">Automated Yield Management</a></li>
+                    </ul>
+                </div>
+                <div class="sidebar-section">
+                    <h3>Best Practices</h3>
+                    <ul class="sidebar-list">
+                        <li><a href="#best-practices">Security & Compliance</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <main class="getting-started-main">
+
+        <!-- All the Pieces -->
+        <section class="guide-section">
+            <h2>All the Pieces</h2>
+            <p>Flow is built on a modular architecture that connects developers to DeFi protocols through a unified API. Here's what makes up the platform:</p>
+            
+            <div class="component-grid">
+                <div class="component-card">
+                    <h4>Developer Accounts</h4>
+                    <p>Your identity on Flow. Create an account with username and password to access the platform.</p>
+                </div>
+                
+                <div class="component-card">
+                    <h4>Applications</h4>
+                    <p>Organize your projects into applications. Each application supports both sandbox (testnet) and production (mainnet) environments.</p>
+                </div>
+                
+                <div class="component-card">
+                    <h4>Ethereum Wallets</h4>
+                    <p>Automatically generated, segregated wallets for each application. Private keys are encrypted and stored securely.</p>
+                </div>
+                
+                <div class="component-card">
+                    <h4>API Keys (Tokens)</h4>
+                    <p>Personal Access Tokens scoped to applications and environments. Use these to authenticate API requests.</p>
+                </div>
+                
+                <div class="component-card">
+                    <h4>RPC Configuration</h4>
+                    <p>Connect to Ethereum networks via Infura or Alchemy. Configure separate RPC URLs for sandbox and production.</p>
+                </div>
+                
+                <div class="component-card">
+                    <h4>Yield Accounts</h4>
+                    <p>Deposit cryptocurrencies and earn 6% annual yield. TBD automatically routes to the best protocol (Morpho or Aave).</p>
+                </div>
+                
+                <div class="component-card">
+                    <h4>Protocol Integration</h4>
+                    <p>Seamless integration with Morpho Blue and Aave Pool. Flow handles token approvals, transactions, and position management.</p>
+                </div>
+                
+                <div class="component-card">
+                    <h4>Webhooks</h4>
+                    <p>Receive real-time notifications for deposits, withdrawals, yield accruals, and transaction status changes.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How They Fit Together -->
+        <section class="guide-section">
+            <h2>How They All Fit Together</h2>
+            <p>The Flow platform architecture connects your application to DeFi protocols through a secure, managed layer:</p>
+            
+            <div class="architecture-diagram">
+                <div class="architecture-layer">
+                    <h4>Your Application</h4>
+                    <ul>
+                        <li>Makes REST API calls to Flow</li>
+                        <li>Uses API keys for authentication</li>
+                        <li>Receives webhook notifications</li>
+                    </ul>
+                </div>
+                
+                <div class="architecture-layer">
+                    <h4>TBD API Gateway</h4>
+                    <ul>
+                        <li>Authenticates requests</li>
+                        <li>Manages wallets and keys</li>
+                        <li>Routes to best protocol</li>
+                        <li>Handles token approvals</li>
+                        <li>Executes blockchain transactions</li>
+                    </ul>
+                </div>
+                
+                <div class="architecture-layer">
+                    <h4>DeFi Protocols</h4>
+                    <ul>
+                        <li>Morpho Blue - Lending markets</li>
+                        <li>Aave Pool - Liquidity pools</li>
+                        <li>Smart contracts on Ethereum</li>
+                    </ul>
+                </div>
+                
+                <div class="architecture-layer">
+                    <h4>Blockchain</h4>
+                    <ul>
+                        <li>Ethereum Mainnet (production)</li>
+                        <li>Sepolia Testnet (sandbox)</li>
+                        <li>RPC providers (Infura/Alchemy)</li>
+                    </ul>
+                </div>
             </div>
             
-            <div class="getting-started-layout">
-                <aside class="getting-started-sidebar">
-                    <div class="sidebar-section">
-                        <h3>Quick Start</h3>
-                        <ul class="sidebar-list">
-                            <li><a href="#quickstart-step1">1. Create Account</a></li>
-                            <li><a href="#quickstart-step2">2. Generate Token</a></li>
-                            <li><a href="#quickstart-step3">3. Make API Call</a></li>
-                            <li><a href="#quickstart-step4">4. Next Steps</a></li>
-                        </ul>
-                    </div>
-                    <div class="sidebar-section">
-                        <h3>Core Concepts</h3>
-                        <ul class="sidebar-list">
-                            <li><a href="#core-accounts">Accounts & Authentication</a></li>
-                            <li><a href="#core-applications">Applications & API Keys</a></li>
-                            <li><a href="#core-wallets">Wallets</a></li>
-                            <li><a href="#core-yield">Yield Accounts</a></li>
-                        </ul>
-                    </div>
-                    <div class="sidebar-section">
-                        <h3>Domain Guides</h3>
-                        <ul class="sidebar-list">
-                            <li><a href="#domain-accounts">Accounts</a></li>
-                            <li><a href="#domain-applications">Applications</a></li>
-                            <li><a href="#domain-wallets">Wallets</a></li>
-                            <li><a href="#domain-yield">Yield Accounts</a></li>
-                            <li><a href="#domain-positions">Positions</a></li>
-                            <li><a href="#domain-markets">Markets</a></li>
-                            <li><a href="#domain-transactions">Transactions</a></li>
-                            <li><a href="#domain-webhooks">Webhooks</a></li>
-                        </ul>
-                    </div>
-                    <div class="sidebar-section">
-                        <h3>Common Flows</h3>
-                        <ul class="sidebar-list">
-                            <li><a href="#flow-first-time">First-Time Setup</a></li>
-                            <li><a href="#flow-production">Production Deployment</a></li>
-                            <li><a href="#flow-multi-currency">Multi-Currency Portfolio</a></li>
-                            <li><a href="#flow-automated">Automated Yield Management</a></li>
-                        </ul>
-                    </div>
-                    <div class="sidebar-section">
-                        <h3>Best Practices</h3>
-                        <ul class="sidebar-list">
-                            <li><a href="#best-practices">Security & Compliance</a></li>
-                        </ul>
-                    </div>
-                </aside>
-
-                <main class="getting-started-main">
-                    <!-- Quick Start Section -->
-                    <section id="quickstart-step1" class="guide-section">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h2>Create Your Account</h2>
-                            <p>Start by creating a TBD developer account. You'll need a username and password.</p>
-                            
-                            <div class="code-example-box">
-                                <div class="code-header">
-                                    <span>cURL</span>
-                                </div>
-                                <pre><code>curl https://api.tbd.com/v1/accounts \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "your_username",
-    "password": "your_secure_password",
-    "email": "your_email@example.com"
-  }'</code></pre>
-                            </div>
-
-                            <div class="response-box">
-                                <strong>Response:</strong>
-                                <pre><code>{
-  "account_id": "acc_1234567890abcdef",
-  "username": "your_username",
-  "created_at": "2025-01-15T10:30:00Z",
-  "status": "active"
-}</code></pre>
-                            </div>
-
-                            <p class="note">
-                                <strong>Note:</strong> You can also create an account through our <a href="account.html">web interface</a>.
-                            </p>
-                        </div>
-                    </section>
-
-                    <section id="quickstart-step2" class="guide-section">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h2>Generate a Personal Access Token</h2>
-                            <p>Authenticate with your account credentials to receive an access token, then create a Personal Access Token for API calls.</p>
-                            
-                            <h3>Step 2a: Authenticate</h3>
-                            <div class="code-example-box">
-                                <div class="code-header">
-                                    <span>cURL</span>
-                                </div>
-                                <pre><code>curl https://api.tbd.com/v1/auth/authenticate \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "your_username",
-    "password": "your_secure_password"
-  }'</code></pre>
-                            </div>
-
-                            <div class="response-box">
-                                <strong>Response:</strong>
-                                <pre><code>{
-  "access_token": "sk_live_temp_...",
-  "token_type": "Bearer",
-  "expires_in": 3600,
-  "account_id": "acc_1234567890abcdef"
-}</code></pre>
-                            </div>
-
-                            <h3>Step 2b: Create Personal Access Token</h3>
-                            <div class="code-example-box">
-                                <div class="code-header">
-                                    <span>cURL</span>
-                                </div>
-                                <pre><code>curl https://api.tbd.com/v1/access-tokens \
-  -X POST \
-  -H "Authorization: Bearer sk_live_temp_..." \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "My API Key",
-    "expires_in": 31536000
-  }'</code></pre>
-                            </div>
-
-                            <div class="response-box">
-                                <strong>Response:</strong>
-                                <pre><code>{
-  "token_id": "tok_1234567890abcdef",
-  "access_token": "sk_live_1234567890abcdef",
-  "name": "My API Key",
-  "created_at": "2025-01-15T10:30:00Z",
-  "expires_at": null
-}</code></pre>
-                            </div>
-
-                            <div class="warning-box">
-                                <strong>⚠️ Important:</strong> Save your access token securely. You won't be able to see it again after creation. Use this token in the <code>Authorization: Bearer</code> header for all API requests.
-                            </div>
-                        </div>
-                    </section>
-
-                    <section id="quickstart-step3" class="guide-section">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h2>Make Your First API Call</h2>
-                            <p>Now that you have an access token, let's create your first yield account and start earning 6% yield.</p>
-                            
-                            <div class="code-example-box">
-                                <div class="code-header">
-                                    <span>cURL</span>
-                                </div>
-                                <pre><code>curl https://api.tbd.com/v1/yield/accounts \
-  -X POST \
-  -H "Authorization: Bearer sk_live_1234567890abcdef" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "currency": "USDC",
-    "initial_deposit": {
-      "amount": "1000.00",
-      "currency": "USDC"
-    },
-    "protocol_preference": "auto"
-  }'</code></pre>
-                            </div>
-
-                            <div class="response-box">
-                                <strong>Response:</strong>
-                                <pre><code>{
-  "account_id": "ya_1234567890abcdef",
-  "currency": "USDC",
-  "protocol": "morpho",
-  "annual_yield_rate": 0.06,
-  "status": "active",
-  "created_at": "2025-01-15T10:30:00Z",
-  "balance": {
-    "amount": "1000.00",
-    "currency": "USDC"
-  }
-}</code></pre>
-                            </div>
-
-                            <p class="success-note">
-                                <strong>🎉 Success!</strong> You've created your first yield account. Your funds are now earning 6% annual yield through TBD's integration with Morpho and Aave protocols.
-                            </p>
-                        </div>
-                    </section>
-
-                    <section id="quickstart-step4" class="guide-section">
-                        <div class="step-number">4</div>
-                        <div class="step-content">
-                            <h2>Next Steps</h2>
-                            <p>Now that you're set up, here's what you can do next:</p>
-                            
-                            <div class="next-steps-grid">
-                                <div class="next-step-card">
-                                    <h3>📚 Explore the API</h3>
-                                    <p>Browse our complete <a href="api-reference.html">API Reference</a> to see all available endpoints for managing yield accounts, positions, and transactions.</p>
-                                </div>
-                                <div class="next-step-card">
-                                    <h3>💼 Manage Positions</h3>
-                                    <p>Use the Positions API to view your active yield positions, check balances, and track yield accruals in real-time.</p>
-                                </div>
-                                <div class="next-step-card">
-                                    <h3>📊 View Markets</h3>
-                                    <p>Explore available markets across Morpho and Aave protocols to see current rates and opportunities.</p>
-                                </div>
-                                <div class="next-step-card">
-                                    <h3>🔔 Set Up Webhooks</h3>
-                                    <p>Subscribe to webhooks to receive real-time notifications for yield accruals, deposits, withdrawals, and more.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Authentication Basics -->
-                    <section class="guide-section">
-                        <h2>Authentication</h2>
-                        <p>All API requests must include your Personal Access Token in the Authorization header:</p>
-                        
-                        <div class="code-example-box">
-                            <pre><code>Authorization: Bearer sk_live_1234567890abcdef</code></pre>
-                        </div>
-
-                        <h3>Base URL</h3>
-                        <p>All API requests should be made to:</p>
-                        <div class="code-example-box">
-                            <pre><code>https://api.tbd.com</code></pre>
-                        </div>
-
-                        <h3>API Versioning</h3>
-                        <p>TBD APIs are versioned. The current version is <code>2025-01-15</code>. Include the version in your API path:</p>
-                        <div class="code-example-box">
-                            <pre><code>https://api.tbd.com/v1/yield/accounts</code></pre>
-                        </div>
-                    </section>
-
-                    <!-- Core Concepts -->
-                    <section id="core-accounts" class="guide-section">
-                        <h2>Core Concepts</h2>
-                        <h3>Accounts & Authentication</h3>
-                        <p>Your TBD account is your identity on the platform. Each account can create multiple applications and generate API keys for authentication.</p>
-                    </section>
-
-                    <section id="core-applications" class="guide-section">
-                        <h3>Applications & API Keys</h3>
-                        <p>Applications organize your projects and automatically get Ethereum wallets. Each application can have multiple API keys scoped to sandbox or production environments.</p>
-                    </section>
-
-                    <section id="core-wallets" class="guide-section">
-                        <h3>Wallets</h3>
-                        <p>Each application automatically receives a segregated Ethereum wallet. Private keys are encrypted and stored securely. You can create additional wallets as needed.</p>
-                    </section>
-
-                    <section id="core-yield" class="guide-section">
-                        <h3>Yield Accounts</h3>
-                        <p>Yield accounts hold your cryptocurrency deposits and earn 6% annual yield. TBD automatically routes funds to the best available protocol (Morpho or Aave).</p>
-                    </section>
-
-                    <!-- Domain Guides -->
-                    <section id="domain-accounts" class="guide-section">
-                        <h2>Domain Guides</h2>
-                        <h3>Accounts</h3>
-                        <p>Manage your developer account, update credentials, and view account details.</p>
-                        <p><strong>Key Operations:</strong></p>
-                        <ul>
-                            <li>Create account: <code>POST /v1/accounts</code></li>
-                            <li>Get account: <code>GET /v1/accounts/{account_id}</code></li>
-                            <li>Update account: <code>PATCH /v1/accounts/{account_id}</code></li>
-                        </ul>
-                    </section>
-
-                    <section id="domain-applications" class="guide-section">
-                        <h3>Applications</h3>
-                        <p>Create and manage applications. Each application automatically gets an Ethereum wallet and can have multiple API keys.</p>
-                        <p><strong>Key Operations:</strong></p>
-                        <ul>
-                            <li>Create application: <code>POST /v1/applications</code></li>
-                            <li>List applications: <code>GET /v1/applications</code></li>
-                            <li>Get application: <code>GET /v1/applications/{application_id}</code></li>
-                            <li>Update application: <code>PATCH /v1/applications/{application_id}</code></li>
-                            <li>Create API key: <code>POST /v1/applications/{application_id}/tokens</code></li>
-                        </ul>
-                    </section>
-
-                    <section id="domain-wallets" class="guide-section">
-                        <h3>Wallets</h3>
-                        <p>Manage Ethereum wallets for your applications. Wallets are automatically created when you create an application.</p>
-                        <p><strong>Key Operations:</strong></p>
-                        <ul>
-                            <li>Create wallet: <code>POST /v1/applications/{application_id}/wallets</code></li>
-                            <li>List wallets: <code>GET /v1/applications/{application_id}/wallets</code></li>
-                            <li>Get wallet: <code>GET /v1/applications/{application_id}/wallets/{wallet_id}</code></li>
-                        </ul>
-                    </section>
-
-                    <section id="domain-yield" class="guide-section">
-                        <h3>Yield Accounts</h3>
-                        <p>Create and manage yield accounts for earning interest on cryptocurrency deposits. Each account is backed by Morpho or Aave protocols.</p>
-                        <p><strong>Key Operations:</strong></p>
-                        <ul>
-                            <li>Create yield account: <code>POST /v1/yield/accounts</code></li>
-                            <li>List yield accounts: <code>GET /v1/yield/accounts</code></li>
-                            <li>Deposit funds: <code>POST /v1/yield/accounts/{account_id}/deposit</code></li>
-                            <li>Withdraw funds: <code>POST /v1/yield/accounts/{account_id}/withdraw</code></li>
-                        </ul>
-                    </section>
-
-                    <section id="domain-positions" class="guide-section">
-                        <h3>Positions</h3>
-                        <p>View and manage your active yield positions across different protocols and cryptocurrencies.</p>
-                        <p><strong>Key Operations:</strong></p>
-                        <ul>
-                            <li>List positions: <code>GET /v1/yield/positions</code></li>
-                            <li>Get position: <code>GET /v1/yield/positions/{position_id}</code></li>
-                        </ul>
-                    </section>
-
-                    <section id="domain-markets" class="guide-section">
-                        <h3>Markets</h3>
-                        <p>Explore available markets and protocols. TBD aggregates data from Morpho and Aave to show you all available yield opportunities.</p>
-                        <p><strong>Key Operations:</strong></p>
-                        <ul>
-                            <li>List markets: <code>GET /v1/markets</code></li>
-                            <li>Get market details: <code>GET /v1/markets/{market_id}</code></li>
-                        </ul>
-                    </section>
-
-                    <section id="domain-transactions" class="guide-section">
-                        <h3>Transactions</h3>
-                        <p>Track all transactions including deposits, withdrawals, and yield accruals across your accounts.</p>
-                        <p><strong>Key Operations:</strong></p>
-                        <ul>
-                            <li>List transactions: <code>GET /v1/transactions</code></li>
-                            <li>Get transaction: <code>GET /v1/transactions/{transaction_id}</code></li>
-                        </ul>
-                    </section>
-
-                    <section id="domain-webhooks" class="guide-section">
-                        <h3>Webhooks</h3>
-                        <p>Subscribe to real-time events for yield accruals, position updates, and transaction notifications.</p>
-                        <p><strong>Key Operations:</strong></p>
-                        <ul>
-                            <li>Create webhook: <code>POST /v1/webhooks</code></li>
-                            <li>List webhooks: <code>GET /v1/webhooks</code></li>
-                            <li>Delete webhook: <code>DELETE /v1/webhooks/{webhook_id}</code></li>
-                        </ul>
-                    </section>
-
-                    <!-- Common Flows -->
-                    <section id="flow-first-time" class="guide-section">
-                        <h2>Common Flows</h2>
-                        <h3>First-Time Developer Setup</h3>
-                        <p>Complete step-by-step guide to get your first yield account running.</p>
-                    </section>
-                    
-                    <!-- Data Flow -->
-                    <section class="guide-section">
-                        <h3>Data Flow</h3>
+            <h3>Data Flow</h3>
             <div class="flow-diagram">
                 <div class="flow-step">
                     <div class="flow-step-number">1</div>
@@ -1011,56 +789,19 @@
                     <div class="flow-step-number">6</div>
                     <div class="flow-step-content">
                         <h4>Withdraw Anytime</h4>
-                        <p>Withdraw funds from your yield account. TBD handles the protocol interaction and transfers funds to your specified address.</p>
+                        <p>Withdraw funds from your yield account. Flow handles the protocol interaction and transfers funds to your specified address.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-                    <!-- Common Flows (continued) -->
-                    <section id="flow-production" class="guide-section">
-                        <h3>Production Deployment</h3>
-                        <p>Step-by-step checklist to safely deploy to mainnet.</p>
-                    </section>
-
-                    <section id="flow-multi-currency" class="guide-section">
-                        <h3>Multi-Currency Portfolio</h3>
-                        <p>Diversify your yield across multiple cryptocurrencies.</p>
-                    </section>
-
-                    <section id="flow-automated" class="guide-section">
-                        <h3>Automated Yield Management</h3>
-                        <p>Build a fully automated system for managing yield.</p>
-                    </section>
-
-                    <!-- Best Practices -->
-                    <section id="best-practices" class="guide-section">
-                        <h2>Best Practices</h2>
-                        <h3>Security & Compliance</h3>
-                        <div class="component-grid">
-                            <div class="component-card">
-                                <h4>API Key Management</h4>
-                                <p>Never commit API keys to version control. Use environment variables and rotate keys regularly.</p>
-                            </div>
-                            <div class="component-card">
-                                <h4>Webhook Verification</h4>
-                                <p>Always verify webhook signatures using the webhook secret to prevent spoofing attacks.</p>
-                            </div>
-                            <div class="component-card">
-                                <h4>Environment Separation</h4>
-                                <p>Use separate API keys for sandbox and production. Never mix test and live credentials.</p>
-                            </div>
-                            <div class="component-card">
-                                <h4>RPC Security</h4>
-                                <p>Keep RPC API keys secure. Use environment-specific keys and monitor for unauthorized access.</p>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Common Flows - Detailed Scenarios -->
-                    <div class="flow-scenario">
-                        <div class="scenario-header">
-                            <h3>Scenario 1: First-Time Developer Setup</h3>
+        <!-- Example Flows and Scenarios -->
+        <section class="guide-section">
+            <h2>Example Flows and Scenarios</h2>
+            
+            <div class="flow-scenario">
+                <div class="scenario-header">
+                    <h3>Scenario 1: First-Time Developer Setup</h3>
                     <p>Complete step-by-step guide to get your first yield account running</p>
                 </div>
                 
@@ -1080,7 +821,7 @@
                         </div>
                     </div>
                     <div class="flow-step-content">
-                        <p style="margin: 0 0 12px 0; color: var(--text-secondary);">Create your TBD account</p>
+                        <p style="margin: 0 0 12px 0; color: var(--text-secondary);">Create your Flow account</p>
                         <div class="flow-step-details">
                             <div class="flow-step-details-item">
                                 <strong>Username:</strong>
@@ -1213,7 +954,7 @@
                             </div>
                             <div class="flow-step-details-item">
                                 <strong>Protocol:</strong>
-                                <code>"auto"</code> <span style="color: var(--text-tertiary);">(TBD selects best)</span>
+                                <code>"auto"</code> <span style="color: var(--text-tertiary);">(Flow selects best)</span>
                             </div>
                         </div>
                     </div>
@@ -1345,9 +1086,9 @@
                 </div>
             </div>
             
-                    <div class="flow-scenario">
-                        <div class="scenario-header">
-                            <h3>Scenario 3: Multi-Currency Portfolio</h3>
+            <div class="flow-scenario">
+                <div class="scenario-header">
+                    <h3>Scenario 3: Multi-Currency Portfolio</h3>
                     <p>Diversify your yield across multiple cryptocurrencies</p>
                 </div>
                 
@@ -1400,9 +1141,9 @@
                 </div>
             </div>
             
-                    <div class="flow-scenario">
-                        <div class="scenario-header">
-                            <h3>Scenario 4: Automated Yield Management</h3>
+            <div class="flow-scenario">
+                <div class="scenario-header">
+                    <h3>Scenario 4: Automated Yield Management</h3>
                     <p>Build a fully automated system for managing yield</p>
                 </div>
                 
@@ -1455,9 +1196,9 @@
             </div>
         </section>
 
-                    <!-- Integration Patterns -->
-                    <section class="guide-section">
-                        <h3>Integration Patterns</h3>
+        <!-- Integration Patterns -->
+        <section class="guide-section">
+            <h2>Integration Patterns</h2>
             
             <div class="pattern-box">
                 <div class="pattern-header">
@@ -1502,9 +1243,9 @@ console.log(<span class="string">`Earning ${position.yield_rate}% APY`</span>);<
                 <p style="color: var(--text-secondary); margin-bottom: 24px;">Event-driven architecture for real-time updates</p>
                 <div class="code-block">
                     <code><span class="comment">// Your webhook endpoint</span>
-<span class="function">POST</span> /webhooks/tbd
+<span class="function">POST</span> /webhooks/flow
 
-<span class="comment">// TBD sends events:</span>
+<span class="comment">// Flow sends events:</span>
 {
   <span class="string">"type"</span>: <span class="string">"yield.accrued"</span>,
   <span class="string">"account_id"</span>: <span class="string">"ya_..."</span>,
@@ -1521,10 +1262,34 @@ console.log(<span class="string">`Earning ${position.yield_rate}% APY`</span>);<
                 </div>
             </div>
         </section>
-                </main>
+
+        <!-- Security Best Practices -->
+        <section class="guide-section">
+            <h2>Security Best Practices</h2>
+            
+            <div class="component-grid">
+                <div class="component-card">
+                    <h4>API Key Management</h4>
+                    <p>Never commit API keys to version control. Use environment variables and rotate keys regularly.</p>
+                </div>
+                
+                <div class="component-card">
+                    <h4>Webhook Verification</h4>
+                    <p>Always verify webhook signatures using the webhook secret to prevent spoofing attacks.</p>
+                </div>
+                
+                <div class="component-card">
+                    <h4>Environment Separation</h4>
+                    <p>Use separate API keys for sandbox and production. Never mix test and live credentials.</p>
+                </div>
+                
+                <div class="component-card">
+                    <h4>RPC Security</h4>
+                    <p>Keep RPC API keys secure. Use environment-specific keys and monitor for unauthorized access.</p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <script src="nav-auth.js"></script>
 </body>
