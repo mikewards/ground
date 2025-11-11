@@ -440,7 +440,7 @@ const apiData = {
                     name: 'allowed_origins',
                     type: 'array',
                     required: false,
-                    description: 'An array of allowed CORS origins. These origins will be allowed to make cross-origin requests to the Flow API when using this application\'s API keys.',
+                    description: 'An array of allowed CORS origins. These origins will be allowed to make cross-origin requests to the TBD API when using this application\'s API keys.',
                     nested: [
                         {
                             name: 'origin',
