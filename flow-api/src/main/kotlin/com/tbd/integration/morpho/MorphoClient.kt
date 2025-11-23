@@ -119,15 +119,28 @@ class MorphoClient {
                     setBody(request)
                 }.body()
                 
-                // Find market matching currency (USDC, USDT, etc.)
-                val market = response.data?.markets?.items?.firstOrNull { market ->
+                // Find all markets matching currency (USDC, USDT, etc.)
+                val matchingMarkets = response.data?.markets?.items?.filter { market ->
                     market.loanAsset?.symbol?.equals(currency, ignoreCase = true) == true ||
                     market.loanAsset?.address?.contains(currency, ignoreCase = true) == true
-                }
+                } ?: emptyList()
+                
+                // Find the market with the highest APY (best rate for users)
+                // Filter out null/zero rates and pick the maximum
+                val bestMarket = matchingMarkets
+                    .mapNotNull { market ->
+                        val apy = market.state?.supplyApy
+                        if (apy != null && apy > 0.0) {
+                            Pair(market, apy)
+                        } else {
+                            null
+                        }
+                    }
+                    .maxByOrNull { it.second }
                 
                 // supplyApy is already a decimal (e.g., 0.06 for 6%), not a percentage
-                // It's already a Double?, so we just need to handle null
-                market?.state?.supplyApy ?: 0.06 // Default 6% if not found
+                // Return the best rate found, or default to 6% if no active markets
+                bestMarket?.second ?: 0.06
             } catch (e: Exception) {
                 println("⚠️ Morpho API error: ${e.message}")
                 0.06 // Default 6% if all retries fail
