@@ -19,30 +19,40 @@ fun Application.auth() {
         bearer("bearer-auth") {
             realm = "TBD API"
             authenticate { tokenCredential ->
-                val tokenService = TokenService()
-                
-                // First try to validate as a PAT (Personal Access Token) from database
-                val patToken = tokenService.validateToken(tokenCredential.token)
-                if (patToken != null) {
-                    return@authenticate UserIdPrincipal(patToken[AccessTokens.accountId].toString())
-                }
-                
-                // Then try to validate as a JWT (from login)
                 try {
-                    val key = Keys.hmacShaKeyFor(jwtSecret.toByteArray())
-                    val claims = Jwts.parser()
-                        .verifyWith(key)
-                        .build()
-                        .parseSignedClaims(tokenCredential.token)
-                    val accountId = claims.payload.subject
-                    if (accountId != null) {
-                        return@authenticate UserIdPrincipal(accountId)
+                    val tokenService = TokenService()
+                    val tokenPrefix = tokenCredential.token.take(8)
+                    
+                    // First try to validate as a PAT (Personal Access Token) from database
+                    val patToken = tokenService.validateToken(tokenCredential.token)
+                    if (patToken != null) {
+                        println("✅ PAT token validated for account: ${patToken[AccessTokens.accountId]}")
+                        return@authenticate UserIdPrincipal(patToken[AccessTokens.accountId].toString())
                     }
+                    
+                    // Then try to validate as a JWT (from login)
+                    try {
+                        val key = Keys.hmacShaKeyFor(jwtSecret.toByteArray())
+                        val claims = Jwts.parser()
+                            .verifyWith(key)
+                            .build()
+                            .parseSignedClaims(tokenCredential.token)
+                        val accountId = claims.payload.subject
+                        if (accountId != null) {
+                            println("✅ JWT token validated for account: $accountId")
+                            return@authenticate UserIdPrincipal(accountId)
+                        }
+                    } catch (e: Exception) {
+                        println("⚠️ JWT validation failed: ${e.message}")
+                    }
+                    
+                    println("❌ Token validation failed - token prefix: $tokenPrefix")
+                    null
                 } catch (e: Exception) {
-                    // JWT validation failed
+                    println("❌ Authentication error: ${e.message}")
+                    e.printStackTrace()
+                    null
                 }
-                
-                null
             }
         }
     }
