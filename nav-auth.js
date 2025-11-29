@@ -1,7 +1,7 @@
 // Navigation Authentication Handler
 (function() {
-    const token = localStorage.getItem('flow_token');
-    const username = localStorage.getItem('flow_username');
+    const token = localStorage.getItem('tbd_token');
+    const username = localStorage.getItem('tbd_username');
     
     const loggedOutNav = document.getElementById('navAuthLoggedOut');
     const loggedInNav = document.getElementById('navAuthLoggedIn');
@@ -37,10 +37,10 @@
     // Sign out handler
     if (signOutBtn) {
         signOutBtn.addEventListener('click', function() {
-            localStorage.removeItem('flow_token');
-            localStorage.removeItem('flow_account_id');
-            localStorage.removeItem('flow_username');
-            localStorage.removeItem('flow_token_expires');
+            localStorage.removeItem('tbd_token');
+            localStorage.removeItem('tbd_account_id');
+            localStorage.removeItem('tbd_username');
+            localStorage.removeItem('tbd_token_expires');
             window.location.href = 'signin.html';
         });
     }

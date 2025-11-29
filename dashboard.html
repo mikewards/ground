@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Flow</title>
+    <title>Dashboard - TBD</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="api-styles.css">
     <link rel="stylesheet" href="dashboard-styles.css">
@@ -18,15 +18,9 @@
             <div class="nav-content">
                 <a href="index.html" class="logo">
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 2L30 8V16C30 23.732 23.732 30 16 30C8.268 30 2 23.732 2 16V8L16 2Z" fill="url(#gradient)" stroke="currentColor" stroke-width="2"/>
-                        <defs>
-                            <linearGradient id="gradient" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#6366F1"/>
-                                <stop offset="1" stop-color="#8B5CF6"/>
-                            </linearGradient>
-                        </defs>
+                        <path d="M16 4L28 20H20V28H12V20H4L16 4Z" fill="#0F172A"/>
                     </svg>
-                    <span class="logo-text">Flow</span>
+                    <span class="logo-text">TBD</span>
                 </a>
                 <div class="nav-links">
                     <a href="guides.html">Guides</a>
@@ -136,7 +130,7 @@
                 </div>
                 <div class="form-group">
                     <label for="appWebhook">Webhook URL</label>
-                    <input type="url" id="appWebhook" name="appWebhook" placeholder="https://your-server.com/webhooks/flow">
+                    <input type="url" id="appWebhook" name="appWebhook" placeholder="https://your-server.com/webhooks/tbd">
                     <small>Receive real-time notifications for deposits, withdrawals, and yield events</small>
                 </div>
                 <div class="form-group">
@@ -441,14 +435,14 @@
     </div>
 
     <script>
-        const API_BASE_URL = 'https://flow-platform-production.up.railway.app';
+        const API_BASE_URL = 'https://tbd-platform-production.up.railway.app';
         let currentAppId = null;
         let currentAppData = null;
         let webhookSecretVisible = false;
         
         // Check authentication
-        const token = localStorage.getItem('flow_token');
-        const username = localStorage.getItem('flow_username');
+        const token = localStorage.getItem('tbd_token');
+        const username = localStorage.getItem('tbd_username');
         
         if (!token) {
             window.location.href = 'signin.html';

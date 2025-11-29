@@ -5,10 +5,11 @@
 }
 
 :root {
-    --primary: #6366F1;
-    --primary-dark: #4F46E5;
-    --primary-light: #818CF8;
-    --secondary: #8B5CF6;
+    /* Square 2009-inspired: Clean, minimal, professional */
+    --primary: #0F172A;
+    --primary-light: #1E293B;
+    --accent: #3B82F6;
+    --accent-light: #60A5FA;
     --text-primary: #0F172A;
     --text-secondary: #475569;
     --text-tertiary: #64748B;
@@ -17,7 +18,7 @@
     --bg-gray-dark: #F1F5F9;
     --border: #E2E8F0;
     --success: #10B981;
-    --gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+    /* Removed gradients - keeping it simple like Square */
 }
 
 body {
@@ -63,10 +64,8 @@ body {
 }
 
 .logo-text {
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--primary);
+    font-weight: 700;
 }
 
 .nav-links {
@@ -84,30 +83,34 @@ body {
 }
 
 .nav-links a:hover {
-    color: var(--text-primary);
+    color: var(--primary);
+    transition: color 0.2s ease;
 }
 
 /* Buttons */
 .btn-primary, .btn-secondary {
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 12px 24px;
+    border-radius: 6px;
     font-weight: 600;
     font-size: 14px;
     text-decoration: none;
     display: inline-block;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     border: none;
     cursor: pointer;
+    letter-spacing: -0.01em;
 }
 
 .btn-primary {
-    background: var(--gradient);
+    background: var(--primary);
     color: white;
+    border: 1px solid var(--primary);
 }
 
 .btn-primary:hover {
+    background: var(--primary-light);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
 }
 
 .btn-secondary {
@@ -118,6 +121,8 @@ body {
 
 .btn-secondary:hover {
     background: var(--bg-gray-dark);
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 .btn-large {
@@ -136,10 +141,10 @@ body {
     text-decoration: underline;
 }
 
-/* Hero Section */
+/* Hero Section - Square-inspired: Clean, minimal */
 .hero {
-    padding: 80px 0 120px;
-    background: linear-gradient(to bottom, #FFFFFF 0%, #F8FAFC 100%);
+    padding: 100px 0 140px;
+    background: var(--bg-white);
 }
 
 .hero .container {
@@ -175,18 +180,17 @@ body {
 }
 
 .hero-title {
-    font-size: 64px;
+    font-size: 72px;
     font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 24px;
-    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 32px;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
 }
 
 .gradient-text {
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--accent);
+    font-weight: 700;
 }
 
 .hero-description {
@@ -215,7 +219,7 @@ body {
 .stat-value {
     font-size: 32px;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--accent);
     margin-bottom: 4px;
 }
 
@@ -227,10 +231,15 @@ body {
 /* Code Window */
 .code-window {
     background: var(--bg-white);
-    border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     border: 1px solid var(--border);
+    transition: box-shadow 0.2s ease;
+}
+
+.code-window:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .code-header {
@@ -376,29 +385,37 @@ body {
 }
 
 .feature-card {
-    padding: 32px;
+    padding: 40px;
     background: var(--bg-white);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    transition: all 0.3s;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .feature-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-    border-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    border-color: var(--primary);
+    transition: all 0.2s ease;
 }
 
 .feature-icon {
-    width: 48px;
-    height: 48px;
-    background: var(--bg-gray);
-    border-radius: 10px;
+    width: 56px;
+    height: 56px;
+    background: var(--primary);
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
-    color: var(--primary);
+    margin-bottom: 24px;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.05);
+    background: var(--primary-light);
 }
 
 .feature-card h3 {
@@ -477,10 +494,15 @@ body {
 
 .integration-visual {
     background: var(--bg-white);
-    border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     border: 1px solid var(--border);
+    transition: box-shadow 0.2s ease;
+}
+
+.integration-visual:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .tabs {
@@ -561,9 +583,17 @@ body {
 }
 
 .security-item {
-    padding: 32px;
-    background: var(--bg-gray);
-    border-radius: 12px;
+    padding: 40px;
+    background: var(--bg-white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.security-item:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .security-icon {
@@ -585,7 +615,7 @@ body {
 /* CTA Section */
 .cta {
     padding: 120px 0;
-    background: var(--gradient);
+    background: var(--primary);
     color: white;
     text-align: center;
 }
@@ -613,6 +643,7 @@ body {
 .cta .btn-primary {
     background: white;
     color: var(--primary);
+    border-color: white;
 }
 
 .cta .btn-primary:hover {
