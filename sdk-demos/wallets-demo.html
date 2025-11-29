@@ -581,5 +581,59 @@
             }
         }
     </script>
+    <style>
+        @media (max-width: 768px) {
+            .sdk-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .sdk-title {
+                font-size: 20px;
+            }
+            
+            .btn-primary {
+                width: 100%;
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+            
+            .wallet-card {
+                padding: 16px;
+            }
+            
+            .wallet-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .wallet-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            body {
+                padding: 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+            
+            .sdk-title {
+                font-size: 18px;
+            }
+            
+            .btn-primary {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            
+            .wallet-card {
+                padding: 12px;
+            }
+        }
+    </style>
 </body>
 </html>
