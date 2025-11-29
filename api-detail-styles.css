@@ -332,6 +332,9 @@
     background: #1E293B;
     border-radius: 8px;
     overflow: hidden;
+    min-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .code-header-bar {
@@ -358,10 +361,19 @@
     line-height: 1.6;
     color: #E2E8F0;
     overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .code-example-box code {
     color: #E2E8F0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    display: block;
+    width: 100%;
 }
 
 /* Response Section (Right Column) */
