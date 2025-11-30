@@ -386,11 +386,46 @@
             color: #E2E8F0;
             padding: 12px;
             border-radius: 4px;
-            font-family: 'Inter', monospace;
+            font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
             font-size: 12px;
             overflow-x: auto;
-            max-height: 200px;
             overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            user-select: text;
+            position: relative;
+        }
+        
+        .log-json-wrapper {
+            position: relative;
+        }
+        
+        .copy-json-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 4px;
+            color: #94A3B8;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s ease;
+        }
+        
+        .copy-json-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #E2E8F0;
+        }
+        
+        .copy-json-btn.copied {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
         }
         
         /* Empty state */
@@ -861,12 +896,24 @@
                                     ${log.error ? `
                                         <div style="margin-top: 12px;">
                                             <span class="log-detail-label">Error</span>
-                                            <div class="log-json-preview" style="margin-top: 8px;">${JSON.stringify(log.error, null, 2)}</div>
+                                            <div class="log-json-wrapper" style="margin-top: 8px;">
+                                                <div class="log-json-preview">${JSON.stringify(log.error, null, 2)}</div>
+                                                <button class="copy-json-btn" onclick="copyJson(this, '${encodeURIComponent(JSON.stringify(log.error, null, 2))}')">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                                    Copy
+                                                </button>
+                                            </div>
                                         </div>
                                     ` : log.response_body ? `
                                         <div style="margin-top: 12px;">
                                             <span class="log-detail-label">Response Body</span>
-                                            <div class="log-json-preview" style="margin-top: 8px;">${JSON.stringify(log.response_body, null, 2)}</div>
+                                            <div class="log-json-wrapper" style="margin-top: 8px;">
+                                                <div class="log-json-preview">${JSON.stringify(log.response_body, null, 2)}</div>
+                                                <button class="copy-json-btn" onclick="copyJson(this, '${encodeURIComponent(JSON.stringify(log.response_body, null, 2))}')">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                                    Copy
+                                                </button>
+                                            </div>
                                         </div>
                                     ` : ''}
                                 </div>
@@ -881,6 +928,25 @@
         function toggleLogDetails(logId) {
             const row = document.querySelector(`[data-log-id="${logId}"]`);
             row.classList.toggle('expanded');
+        }
+        
+        // Copy JSON to clipboard
+        function copyJson(btn, encodedJson) {
+            const json = decodeURIComponent(encodedJson);
+            navigator.clipboard.writeText(json).then(() => {
+                btn.classList.add('copied');
+                btn.innerHTML = `
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Copied!
+                `;
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = `
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        Copy
+                    `;
+                }, 2000);
+            });
         }
         
         // Filter logs based on current filter values
