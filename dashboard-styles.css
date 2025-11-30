@@ -1,5 +1,94 @@
 /* Dashboard Styles */
 
+/* Secondary Navigation (Square-style) */
+.secondary-nav {
+    background: var(--bg-white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 73px; /* Height of main nav */
+    z-index: 999;
+}
+
+.secondary-nav .container {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 24px;
+}
+
+.secondary-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.secondary-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.secondary-nav-link:hover {
+    color: var(--text-primary);
+    background: var(--bg-gray);
+}
+
+.secondary-nav-link.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    font-weight: 600;
+}
+
+.secondary-nav-link svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.secondary-nav-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 14px 20px 14px 0;
+    border-right: 1px solid var(--border);
+    margin-right: 8px;
+}
+
+/* Mobile secondary nav */
+@media (max-width: 768px) {
+    .secondary-nav {
+        top: 72px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .secondary-nav .container {
+        padding: 0 16px;
+    }
+    
+    .secondary-nav-title {
+        display: none;
+    }
+    
+    .secondary-nav-link {
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+    
+    .secondary-nav-link svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
 /* Form Section Divider */
 .form-section-divider {
     margin: 32px 0 20px;
