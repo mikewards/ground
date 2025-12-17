@@ -250,6 +250,15 @@
     line-height: 1.6;
 }
 
+.info-box-success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.info-box-success svg {
+    color: #22c55e;
+}
+
 /* Section Header Inline */
 .section-header-inline {
     display: flex;
@@ -269,6 +278,12 @@
     margin-top: 24px;
     padding-top: 24px;
     border-top: 1px solid var(--border);
+}
+
+.rpc-auto-note {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 8px 0 16px 0;
 }
 
 .form-actions {

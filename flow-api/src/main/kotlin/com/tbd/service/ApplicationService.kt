@@ -16,9 +16,19 @@ class ApplicationService {
     private val json = Json { ignoreUnknownKeys = true }
     private val walletService = WalletService()
     
+    companion object {
+        // Default RPC URLs - free public endpoints for easy onboarding
+        const val DEFAULT_SANDBOX_RPC = "https://rpc.sepolia.org"
+        const val DEFAULT_PRODUCTION_RPC = "https://eth.llamarpc.com" // Free public mainnet RPC
+    }
+    
     fun createApplication(accountId: UUID, request: CreateApplicationRequest): ApplicationResponse {
         val now = Instant.now()
         val webhookSecret = if (request.webhook_url != null) generateWebhookSecret() else null
+        
+        // Auto-provision RPC URLs with defaults if not provided
+        val sandboxRpc = request.sandbox_rpc_url?.takeIf { it.isNotBlank() } ?: DEFAULT_SANDBOX_RPC
+        val productionRpc = request.production_rpc_url?.takeIf { it.isNotBlank() } ?: DEFAULT_PRODUCTION_RPC
         
         // Create application
         val applicationId = transaction {
@@ -32,8 +42,8 @@ class ApplicationService {
                 it[Applications.webhookSecret] = webhookSecret
                 it[Applications.allowedOrigins] = request.allowed_origins?.let { origins -> json.encodeToString(origins) }
                 it[Applications.permissions] = request.permissions?.let { perms -> json.encodeToString(perms) }
-                it[Applications.sandboxRpcUrl] = request.sandbox_rpc_url
-                it[Applications.productionRpcUrl] = request.production_rpc_url
+                it[Applications.sandboxRpcUrl] = sandboxRpc
+                it[Applications.productionRpcUrl] = productionRpc
                 it[Applications.createdAt] = now
                 it[Applications.updatedAt] = now
             } get Applications.id
