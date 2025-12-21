@@ -455,21 +455,30 @@
     .code-block,
     .code-content {
         max-width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
     
     .code-content pre,
     .code-block pre {
         font-size: 13px;
-        white-space: pre;
-        overflow-x: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow: hidden;
     }
     
     /* API example boxes */
     .code-example-box {
         max-width: 100%;
-        overflow-x: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    
+    .code-example-box pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        word-break: break-word;
     }
 }
 

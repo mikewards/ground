@@ -389,8 +389,9 @@
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 500px;
 }
 
 .example-section .code-block-content pre {
@@ -398,9 +399,10 @@
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    overflow-x: auto;
-    white-space: pre;
-    word-wrap: normal;
+    overflow: hidden;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
     margin: 0;
     display: block;
 }
@@ -433,13 +435,16 @@
 .code-example-box pre {
     margin: 0;
     padding: 20px;
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-size: 14px;
     line-height: 1.6;
     color: #E2E8F0;
-    overflow-x: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 500px;
     white-space: pre-wrap;
     word-wrap: break-word;
+    word-break: break-word;
     min-width: 0;
     width: 100%;
     box-sizing: border-box;
@@ -640,13 +645,16 @@
     }
     
     .code-example-box {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
     
     .code-example-box pre {
         font-size: 12px;
         padding: 16px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        word-break: break-word;
         word-wrap: break-word;
         overflow-wrap: break-word;
         white-space: pre-wrap;
