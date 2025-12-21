@@ -225,34 +225,27 @@ document.addEventListener('DOMContentLoaded', function() {
         const copyBtn = block.querySelector('.code-copy-btn');
         const content = block.querySelector('.code-block-content');
         
-        // If this block has language code blocks, fix the layout
+        // If this block has language code blocks, ensure flex layout
         if (content && content.querySelector('.lang-code')) {
-            content.style.display = 'block';
+            content.style.display = 'flex';
+            content.style.flexDirection = 'row';
         }
         
         // Process each pre element (for language switching)
         allPre.forEach((pre, preIndex) => {
             const code = pre.querySelector('code');
             
-            // Apply syntax highlighting
+            // Apply syntax highlighting (only for cURL and JSON - others cause issues)
             if (code && !code.dataset.highlighted) {
                 const text = code.textContent || '';
                 const isCurl = text.trim().startsWith('curl') || block.classList.contains('curl');
                 const isJson = text.trim().startsWith('{') || text.trim().startsWith('[') || block.classList.contains('json');
-                const isJavaScript = (text.includes('const ') || text.includes('require(') || text.includes('await ')) && !text.includes('import ');
-                const isPython = text.includes('import ') || (text.includes('print(') && !text.includes('require'));
-                const isRuby = text.includes('require ') && text.includes('puts');
                 
+                // Only highlight cURL and JSON - language code blocks stay plain for now
                 if (isCurl) {
                     code.innerHTML = highlightCurl(text);
                 } else if (isJson) {
                     code.innerHTML = highlightJson(text);
-                } else if (isJavaScript) {
-                    code.innerHTML = highlightJavaScript(text);
-                } else if (isPython) {
-                    code.innerHTML = highlightPython(text);
-                } else if (isRuby) {
-                    code.innerHTML = highlightRuby(text);
                 }
                 code.dataset.highlighted = 'true';
             }
