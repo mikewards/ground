@@ -431,19 +431,27 @@ select option {
 .code-content {
     padding: 24px;
     background: #1E293B;
-    overflow-x: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 500px;
 }
 
 .code-content pre {
     margin: 0;
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-size: 14px;
     line-height: 1.6;
     color: #E2E8F0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 .code-content code {
     color: #E2E8F0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 .code-keyword {
@@ -681,19 +689,27 @@ select option {
 .code-block {
     padding: 24px;
     background: #1E293B;
-    overflow-x: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 500px;
 }
 
 .code-block pre {
     margin: 0;
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-size: 14px;
     line-height: 1.6;
     color: #E2E8F0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 .code-block code {
     color: #E2E8F0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 /* Security Section */
@@ -1313,19 +1329,10 @@ select option {
 
 .code-block-content {
     padding: 0;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden;
     display: flex;
     width: 100%;
-    max-width: 100%;
-    min-width: 0;
     box-sizing: border-box;
-}
-
-/* When containing language code blocks, use flex layout but hide inactive blocks */
-.code-block-content:has(.lang-code) {
-    display: flex;
-    position: relative;
 }
 
 .code-block-content pre {
@@ -1335,24 +1342,21 @@ select option {
     font-size: 13px;
     line-height: 1.7;
     color: #e2e8f0;
-    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
     flex: 1;
     min-width: 0;
-    max-width: 100%;
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
     box-sizing: border-box;
-    counter-reset: line;
-    display: block;
+    overflow-y: auto;
+    max-height: 500px;
 }
 
 .code-block-content pre code {
     display: block;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 /* Line numbers */
@@ -1363,6 +1367,7 @@ select option {
     user-select: none;
     text-align: right;
     min-width: 40px;
+    flex-shrink: 0;
 }
 
 .code-line-numbers span {
@@ -1377,29 +1382,10 @@ select option {
 /* Language code block switching */
 .lang-code {
     display: none !important;
-    width: 0;
-    min-width: 0;
-    flex: 0;
 }
 
 .lang-code.active {
     display: block !important;
-    width: auto;
-    flex: 1;
-    min-width: 0;
-}
-
-/* Ensure line numbers and active code are positioned correctly for language blocks */
-.code-block-content:has(.lang-code) {
-    display: flex;
-    align-items: flex-start;
-}
-
-.code-block-content:has(.lang-code) .code-line-numbers {
-    flex-shrink: 0;
-}
-
-.code-block-content:has(.lang-code) .lang-code.active {
     flex: 1;
     min-width: 0;
 }
@@ -1514,12 +1500,21 @@ select option {
     font-size: 13px;
     line-height: 1.7;
     color: #475569;
-    overflow-x: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 500px;
 }
 
 .response-content pre {
     margin: 0;
     white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.response-content pre code {
+    white-space: pre-wrap;
+    word-wrap: break-word;
     word-break: break-word;
 }
 
