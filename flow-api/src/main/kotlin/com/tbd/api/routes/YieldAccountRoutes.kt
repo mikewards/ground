@@ -3,6 +3,9 @@ package com.tbd.api.routes
 import com.tbd.dto.*
 import com.tbd.service.YieldService
 import com.tbd.service.WebhookService
+import com.tbd.middleware.ApplicationIdKey
+import com.tbd.middleware.ApplicationNameKey
+import com.tbd.middleware.EnvironmentKey
 import com.tbd.integration.ProtocolService
 import com.tbd.integration.morpho.MorphoMarket
 import com.tbd.integration.aave.AaveReserve
@@ -168,14 +171,22 @@ fun Application.yieldAccountRoutes() {
                     val yieldAccountId = UUID.fromString(call.parameters["yieldAccountId"])
                     val request = call.receive<DepositRequest>()
                     
+                    // Get application context from auth middleware
+                    val applicationId = call.attributes.getOrNull(ApplicationIdKey)
+                    val applicationName = call.attributes.getOrNull(ApplicationNameKey)
+                    val environment = call.attributes.getOrNull(EnvironmentKey)
+                    
                     try {
                         val transaction = yieldService.deposit(accountId, yieldAccountId, request)
                         
-                        // Fire webhook event asynchronously
+                        // Fire webhook event asynchronously with application context
                         coroutineScope {
                             launch {
                                 WebhookService.sendDepositCompleted(
                                     accountId = accountId,
+                                    applicationId = applicationId,
+                                    applicationName = applicationName,
+                                    environment = environment,
                                     yieldAccountId = yieldAccountId.toString(),
                                     amount = request.amount,
                                     currency = request.currency,
@@ -200,14 +211,22 @@ fun Application.yieldAccountRoutes() {
                     val yieldAccountId = UUID.fromString(call.parameters["yieldAccountId"])
                     val request = call.receive<WithdrawRequest>()
                     
+                    // Get application context from auth middleware
+                    val applicationId = call.attributes.getOrNull(ApplicationIdKey)
+                    val applicationName = call.attributes.getOrNull(ApplicationNameKey)
+                    val environment = call.attributes.getOrNull(EnvironmentKey)
+                    
                     try {
                         val transaction = yieldService.withdraw(accountId, yieldAccountId, request)
                         
-                        // Fire webhook event asynchronously
+                        // Fire webhook event asynchronously with application context
                         coroutineScope {
                             launch {
                                 WebhookService.sendWithdrawalCompleted(
                                     accountId = accountId,
+                                    applicationId = applicationId,
+                                    applicationName = applicationName,
+                                    environment = environment,
                                     yieldAccountId = yieldAccountId.toString(),
                                     amount = request.amount,
                                     currency = request.currency,
