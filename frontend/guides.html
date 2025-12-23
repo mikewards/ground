@@ -895,7 +895,7 @@
                 
                 <h3>Webhook Payload</h3>
                 <p style="font-size: 16px; color: var(--text-secondary); margin-bottom: 16px;">
-                    Webhook payloads are sent as POST requests with a JSON body:
+                    Webhook payloads are sent as POST requests with a JSON body. All payloads include <code>application_id</code> and <code>application_name</code> so you can identify which application triggered the event:
                 </p>
                 <div class="code-block-unified">
                     <div class="code-block-header">
@@ -907,6 +907,9 @@
   "event_id": "evt_abc123def456",
   "timestamp": 1701456789000,
   "data": {
+    "application_id": "app_abc123",
+    "application_name": "Production App",
+    "environment": "production",
     "yield_account_id": "ya_1234567890",
     "amount": "1000.00",
     "currency": "USDC",
@@ -916,6 +919,10 @@
 }</pre>
                     </div>
                 </div>
+                
+                <p style="font-size: 14px; color: var(--text-tertiary); margin-top: 12px; margin-bottom: 24px;">
+                    <strong>Note:</strong> If the request was made via dashboard (JWT auth) rather than an API key, <code>application_id</code> will be <code>null</code>.
+                </p>
                 
                 <h3>Verifying Signatures</h3>
                 <p style="font-size: 16px; color: var(--text-secondary); margin-bottom: 16px;">

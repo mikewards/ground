@@ -37,7 +37,8 @@ fun Application.applicationRoutes() {
                                     eventType = WebhookService.EventTypes.APPLICATION_CREATED,
                                     payload = mapOf(
                                         "application_id" to app.application_id,
-                                        "name" to app.name,
+                                        "application_name" to app.name,
+                                        "environment" to app.environment,
                                         "timestamp" to System.currentTimeMillis()
                                     )
                                 )
@@ -150,7 +151,8 @@ fun Application.applicationRoutes() {
                             val request = call.receive<CreateAppTokenRequest>()
                             val token = applicationService.createAppToken(accountId, applicationId, request)
                             
-                            // Fire webhook event asynchronously
+                            // Fire webhook event asynchronously - fetch app name for context
+                            val appName = applicationService.getApplication(accountId, applicationId)?.name
                             coroutineScope {
                                 launch {
                                     WebhookService.sendEvent(
@@ -158,6 +160,7 @@ fun Application.applicationRoutes() {
                                         eventType = WebhookService.EventTypes.API_KEY_CREATED,
                                         payload = mapOf(
                                             "application_id" to applicationId.toString(),
+                                            "application_name" to appName,
                                             "token_id" to token.token_id,
                                             "environment" to token.environment,
                                             "timestamp" to System.currentTimeMillis()

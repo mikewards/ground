@@ -200,9 +200,13 @@ object WebhookService {
     }
     
     // Convenience methods for specific events
+    // All methods now include applicationId and applicationName for traceability
     
     suspend fun sendDepositCompleted(
         accountId: UUID,
+        applicationId: String?,
+        applicationName: String?,
+        environment: String?,
         yieldAccountId: String,
         amount: String,
         currency: String,
@@ -212,6 +216,9 @@ object WebhookService {
         accountId,
         EventTypes.DEPOSIT_COMPLETED,
         mapOf(
+            "application_id" to applicationId,
+            "application_name" to applicationName,
+            "environment" to environment,
             "yield_account_id" to yieldAccountId,
             "amount" to amount,
             "currency" to currency,
@@ -223,6 +230,9 @@ object WebhookService {
     
     suspend fun sendWithdrawalCompleted(
         accountId: UUID,
+        applicationId: String?,
+        applicationName: String?,
+        environment: String?,
         yieldAccountId: String,
         amount: String,
         currency: String,
@@ -231,6 +241,9 @@ object WebhookService {
         accountId,
         EventTypes.WITHDRAWAL_COMPLETED,
         mapOf(
+            "application_id" to applicationId,
+            "application_name" to applicationName,
+            "environment" to environment,
             "yield_account_id" to yieldAccountId,
             "amount" to amount,
             "currency" to currency,
@@ -241,6 +254,9 @@ object WebhookService {
     
     suspend fun sendYieldAccrued(
         accountId: UUID,
+        applicationId: String?,
+        applicationName: String?,
+        environment: String?,
         yieldAccountId: String,
         yieldAmount: String,
         totalBalance: String,
@@ -250,6 +266,9 @@ object WebhookService {
         accountId,
         EventTypes.YIELD_ACCRUED,
         mapOf(
+            "application_id" to applicationId,
+            "application_name" to applicationName,
+            "environment" to environment,
             "yield_account_id" to yieldAccountId,
             "yield_amount" to yieldAmount,
             "total_balance" to totalBalance,
@@ -261,6 +280,9 @@ object WebhookService {
     
     suspend fun sendRateChanged(
         accountId: UUID,
+        applicationId: String?,
+        applicationName: String?,
+        environment: String?,
         currency: String,
         protocol: String,
         oldRate: Double,
@@ -269,6 +291,9 @@ object WebhookService {
         accountId,
         EventTypes.RATE_CHANGED,
         mapOf(
+            "application_id" to applicationId,
+            "application_name" to applicationName,
+            "environment" to environment,
             "currency" to currency,
             "protocol" to protocol,
             "old_rate" to oldRate,
@@ -280,6 +305,9 @@ object WebhookService {
     
     suspend fun sendAccountStatusChanged(
         accountId: UUID,
+        applicationId: String?,
+        applicationName: String?,
+        environment: String?,
         yieldAccountId: String,
         oldStatus: String,
         newStatus: String
@@ -287,6 +315,9 @@ object WebhookService {
         accountId,
         EventTypes.ACCOUNT_STATUS_CHANGED,
         mapOf(
+            "application_id" to applicationId,
+            "application_name" to applicationName,
+            "environment" to environment,
             "yield_account_id" to yieldAccountId,
             "old_status" to oldStatus,
             "new_status" to newStatus,

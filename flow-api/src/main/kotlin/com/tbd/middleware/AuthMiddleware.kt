@@ -1,6 +1,7 @@
 package com.tbd.middleware
 
 import com.tbd.model.AccessTokens
+import com.tbd.model.Applications
 import com.tbd.service.TokenService
 import com.typesafe.config.ConfigFactory
 import io.jsonwebtoken.Jwts
@@ -10,6 +11,14 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.*
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
+
+// Attribute keys for storing application context
+val ApplicationIdKey = AttributeKey<String>("applicationId")
+val ApplicationNameKey = AttributeKey<String>("applicationName")
+val EnvironmentKey = AttributeKey<String>("environment")
 
 fun Application.auth() {
     val config = ConfigFactory.load()
@@ -26,8 +35,28 @@ fun Application.auth() {
                     // First try to validate as a PAT (Personal Access Token) from database
                     val patToken = tokenService.validateToken(tokenCredential.token)
                     if (patToken != null) {
-                        println("✅ PAT token validated for account: ${patToken[AccessTokens.accountId]}")
-                        return@authenticate UserIdPrincipal(patToken[AccessTokens.accountId].toString())
+                        val accountId = patToken[AccessTokens.accountId]
+                        val applicationId = patToken[AccessTokens.applicationId]
+                        val environment = patToken[AccessTokens.environment]
+                        
+                        println("✅ PAT token validated for account: $accountId, app: $applicationId")
+                        
+                        // Store application context in call attributes
+                        if (applicationId != null) {
+                            this.request.call.attributes.put(ApplicationIdKey, applicationId.toString())
+                            this.request.call.attributes.put(EnvironmentKey, environment)
+                            
+                            // Fetch application name
+                            val appName = transaction {
+                                Applications.select { Applications.id eq applicationId }
+                                    .firstOrNull()?.get(Applications.name)
+                            }
+                            if (appName != null) {
+                                this.request.call.attributes.put(ApplicationNameKey, appName)
+                            }
+                        }
+                        
+                        return@authenticate UserIdPrincipal(accountId.toString())
                     }
                     
                     // Then try to validate as a JWT (from login)
@@ -40,6 +69,7 @@ fun Application.auth() {
                         val accountId = claims.payload.subject
                         if (accountId != null) {
                             println("✅ JWT token validated for account: $accountId")
+                            // JWT tokens are from dashboard login, no application context
                             return@authenticate UserIdPrincipal(accountId)
                         }
                     } catch (e: Exception) {
