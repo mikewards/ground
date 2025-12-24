@@ -1023,6 +1023,629 @@ const apiData = {
     "event_type": "deposit.completed"
   }'`
         }
+    },
+    
+    // Webhook Events - detailed payload documentation for each event type
+    'webhook-events': {
+        'deposit-completed': {
+            method: 'EVENT',
+            path: 'deposit.completed',
+            title: 'deposit.completed',
+            summary: 'Triggered when funds are successfully deposited to a yield account.',
+            description: 'This event is fired after a deposit transaction has been confirmed and the funds are available in the yield account. The payload includes details about the deposit amount, currency, protocol used, and the application that initiated the request.',
+            permissions: 'Webhook subscription required',
+            requestBody: [
+                {
+                    name: 'application_id',
+                    type: 'string',
+                    required: true,
+                    description: 'The ID of the application that made the API call. Null if the request was made via dashboard.'
+                },
+                {
+                    name: 'application_name',
+                    type: 'string',
+                    required: true,
+                    description: 'Human-readable name of the application.'
+                },
+                {
+                    name: 'environment',
+                    type: 'string',
+                    required: true,
+                    description: 'The environment where the deposit occurred.',
+                    constraints: [{ type: 'enum', values: ['sandbox', 'production'] }]
+                },
+                {
+                    name: 'yield_account_id',
+                    type: 'string',
+                    required: true,
+                    description: 'The unique identifier of the yield account that received the deposit.'
+                },
+                {
+                    name: 'amount',
+                    type: 'string',
+                    required: true,
+                    description: 'The deposit amount as a decimal string (e.g., "1000.00").'
+                },
+                {
+                    name: 'currency',
+                    type: 'string',
+                    required: true,
+                    description: 'The cryptocurrency that was deposited.',
+                    constraints: [{ type: 'enum', values: ['USDC', 'USDT', 'DAI', 'ETH', 'WBTC'] }]
+                },
+                {
+                    name: 'protocol',
+                    type: 'string',
+                    required: true,
+                    description: 'The DeFi protocol where funds were deposited.',
+                    constraints: [{ type: 'enum', values: ['morpho', 'aave', 'auto'] }]
+                },
+                {
+                    name: 'transaction_id',
+                    type: 'string',
+                    required: true,
+                    description: 'The unique identifier of the deposit transaction.'
+                },
+                {
+                    name: 'timestamp',
+                    type: 'integer',
+                    required: true,
+                    description: 'Unix timestamp (milliseconds) when the event occurred.'
+                }
+            ],
+            successResponse: {
+                event_type: 'deposit.completed',
+                event_id: 'evt_abc123def456',
+                timestamp: 1701456789000,
+                data: {
+                    application_id: 'app_1234567890abcdef',
+                    application_name: 'Production App',
+                    environment: 'production',
+                    yield_account_id: 'ya_xyz789',
+                    amount: '1000.00',
+                    currency: 'USDC',
+                    protocol: 'aave',
+                    transaction_id: 'txn_abc123',
+                    timestamp: 1701456789000
+                }
+            },
+            errorResponse: null,
+            curlExample: `# Example webhook payload sent to your endpoint
+# POST https://your-server.com/webhooks
+
+{
+  "event_type": "deposit.completed",
+  "event_id": "evt_abc123def456",
+  "timestamp": 1701456789000,
+  "data": {
+    "application_id": "app_1234567890abcdef",
+    "application_name": "Production App",
+    "environment": "production",
+    "yield_account_id": "ya_xyz789",
+    "amount": "1000.00",
+    "currency": "USDC",
+    "protocol": "aave",
+    "transaction_id": "txn_abc123",
+    "timestamp": 1701456789000
+  }
+}`
+        },
+        'withdrawal-completed': {
+            method: 'EVENT',
+            path: 'withdrawal.completed',
+            title: 'withdrawal.completed',
+            summary: 'Triggered when funds are successfully withdrawn from a yield account.',
+            description: 'This event is fired after a withdrawal transaction has been confirmed and the funds have been sent to the destination address. Use this event to update your records and notify users of completed withdrawals.',
+            permissions: 'Webhook subscription required',
+            requestBody: [
+                {
+                    name: 'application_id',
+                    type: 'string',
+                    required: true,
+                    description: 'The ID of the application that made the API call. Null if the request was made via dashboard.'
+                },
+                {
+                    name: 'application_name',
+                    type: 'string',
+                    required: true,
+                    description: 'Human-readable name of the application.'
+                },
+                {
+                    name: 'environment',
+                    type: 'string',
+                    required: true,
+                    description: 'The environment where the withdrawal occurred.',
+                    constraints: [{ type: 'enum', values: ['sandbox', 'production'] }]
+                },
+                {
+                    name: 'yield_account_id',
+                    type: 'string',
+                    required: true,
+                    description: 'The unique identifier of the yield account from which funds were withdrawn.'
+                },
+                {
+                    name: 'amount',
+                    type: 'string',
+                    required: true,
+                    description: 'The withdrawal amount as a decimal string (e.g., "500.00").'
+                },
+                {
+                    name: 'currency',
+                    type: 'string',
+                    required: true,
+                    description: 'The cryptocurrency that was withdrawn.',
+                    constraints: [{ type: 'enum', values: ['USDC', 'USDT', 'DAI', 'ETH', 'WBTC'] }]
+                },
+                {
+                    name: 'transaction_id',
+                    type: 'string',
+                    required: true,
+                    description: 'The unique identifier of the withdrawal transaction.'
+                },
+                {
+                    name: 'timestamp',
+                    type: 'integer',
+                    required: true,
+                    description: 'Unix timestamp (milliseconds) when the event occurred.'
+                }
+            ],
+            successResponse: {
+                event_type: 'withdrawal.completed',
+                event_id: 'evt_def456ghi789',
+                timestamp: 1701456789000,
+                data: {
+                    application_id: 'app_1234567890abcdef',
+                    application_name: 'Production App',
+                    environment: 'production',
+                    yield_account_id: 'ya_xyz789',
+                    amount: '500.00',
+                    currency: 'USDC',
+                    transaction_id: 'txn_def456',
+                    timestamp: 1701456789000
+                }
+            },
+            errorResponse: null,
+            curlExample: `# Example webhook payload sent to your endpoint
+# POST https://your-server.com/webhooks
+
+{
+  "event_type": "withdrawal.completed",
+  "event_id": "evt_def456ghi789",
+  "timestamp": 1701456789000,
+  "data": {
+    "application_id": "app_1234567890abcdef",
+    "application_name": "Production App",
+    "environment": "production",
+    "yield_account_id": "ya_xyz789",
+    "amount": "500.00",
+    "currency": "USDC",
+    "transaction_id": "txn_def456",
+    "timestamp": 1701456789000
+  }
+}`
+        },
+        'yield-accrued': {
+            method: 'EVENT',
+            path: 'yield.accrued',
+            title: 'yield.accrued',
+            summary: 'Triggered when yield is accrued to a yield account.',
+            description: 'This event is fired daily when interest earnings are calculated and added to yield accounts. Use this to track yield generation and update user balances in your application.',
+            permissions: 'Webhook subscription required',
+            requestBody: [
+                {
+                    name: 'application_id',
+                    type: 'string',
+                    required: false,
+                    description: 'The ID of the application associated with the account. May be null for account-level events.'
+                },
+                {
+                    name: 'application_name',
+                    type: 'string',
+                    required: false,
+                    description: 'Human-readable name of the application.'
+                },
+                {
+                    name: 'environment',
+                    type: 'string',
+                    required: true,
+                    description: 'The environment where yield was accrued.',
+                    constraints: [{ type: 'enum', values: ['sandbox', 'production'] }]
+                },
+                {
+                    name: 'yield_account_id',
+                    type: 'string',
+                    required: true,
+                    description: 'The unique identifier of the yield account.'
+                },
+                {
+                    name: 'yield_amount',
+                    type: 'string',
+                    required: true,
+                    description: 'The amount of yield accrued as a decimal string (e.g., "0.16").'
+                },
+                {
+                    name: 'total_balance',
+                    type: 'string',
+                    required: true,
+                    description: 'The new total balance after yield accrual.'
+                },
+                {
+                    name: 'currency',
+                    type: 'string',
+                    required: true,
+                    description: 'The cryptocurrency of the yield account.',
+                    constraints: [{ type: 'enum', values: ['USDC', 'USDT', 'DAI', 'ETH', 'WBTC'] }]
+                },
+                {
+                    name: 'apy',
+                    type: 'number',
+                    required: true,
+                    description: 'The annual percentage yield at the time of accrual (e.g., 0.06 for 6%).'
+                },
+                {
+                    name: 'timestamp',
+                    type: 'integer',
+                    required: true,
+                    description: 'Unix timestamp (milliseconds) when the event occurred.'
+                }
+            ],
+            successResponse: {
+                event_type: 'yield.accrued',
+                event_id: 'evt_yield123',
+                timestamp: 1701456789000,
+                data: {
+                    application_id: null,
+                    application_name: null,
+                    environment: 'production',
+                    yield_account_id: 'ya_xyz789',
+                    yield_amount: '0.16',
+                    total_balance: '1000.16',
+                    currency: 'USDC',
+                    apy: 0.06,
+                    timestamp: 1701456789000
+                }
+            },
+            errorResponse: null,
+            curlExample: `# Example webhook payload sent to your endpoint
+# POST https://your-server.com/webhooks
+
+{
+  "event_type": "yield.accrued",
+  "event_id": "evt_yield123",
+  "timestamp": 1701456789000,
+  "data": {
+    "application_id": null,
+    "application_name": null,
+    "environment": "production",
+    "yield_account_id": "ya_xyz789",
+    "yield_amount": "0.16",
+    "total_balance": "1000.16",
+    "currency": "USDC",
+    "apy": 0.06,
+    "timestamp": 1701456789000
+  }
+}`
+        },
+        'rate-changed': {
+            method: 'EVENT',
+            path: 'rate.changed',
+            title: 'rate.changed',
+            summary: 'Triggered when yield rates change significantly (>0.5%).',
+            description: 'This event is fired when the yield rate for a currency/protocol combination changes by more than 0.5%. Use this to update displayed rates in your application or alert users to rate changes.',
+            permissions: 'Webhook subscription required',
+            requestBody: [
+                {
+                    name: 'application_id',
+                    type: 'string',
+                    required: false,
+                    description: 'The ID of the application. May be null for broadcast events.'
+                },
+                {
+                    name: 'application_name',
+                    type: 'string',
+                    required: false,
+                    description: 'Human-readable name of the application.'
+                },
+                {
+                    name: 'environment',
+                    type: 'string',
+                    required: true,
+                    description: 'The environment where the rate changed.',
+                    constraints: [{ type: 'enum', values: ['sandbox', 'production'] }]
+                },
+                {
+                    name: 'currency',
+                    type: 'string',
+                    required: true,
+                    description: 'The cryptocurrency whose rate changed.',
+                    constraints: [{ type: 'enum', values: ['USDC', 'USDT', 'DAI', 'ETH', 'WBTC'] }]
+                },
+                {
+                    name: 'protocol',
+                    type: 'string',
+                    required: true,
+                    description: 'The DeFi protocol where the rate changed.',
+                    constraints: [{ type: 'enum', values: ['morpho', 'aave'] }]
+                },
+                {
+                    name: 'old_rate',
+                    type: 'number',
+                    required: true,
+                    description: 'The previous yield rate (e.g., 0.055 for 5.5%).'
+                },
+                {
+                    name: 'new_rate',
+                    type: 'number',
+                    required: true,
+                    description: 'The new yield rate (e.g., 0.062 for 6.2%).'
+                },
+                {
+                    name: 'change_percent',
+                    type: 'number',
+                    required: true,
+                    description: 'The percentage change in rate (e.g., 12.7 for a 12.7% increase).'
+                },
+                {
+                    name: 'timestamp',
+                    type: 'integer',
+                    required: true,
+                    description: 'Unix timestamp (milliseconds) when the event occurred.'
+                }
+            ],
+            successResponse: {
+                event_type: 'rate.changed',
+                event_id: 'evt_rate456',
+                timestamp: 1701456789000,
+                data: {
+                    application_id: null,
+                    application_name: null,
+                    environment: 'production',
+                    currency: 'USDC',
+                    protocol: 'aave',
+                    old_rate: 0.055,
+                    new_rate: 0.062,
+                    change_percent: 12.7,
+                    timestamp: 1701456789000
+                }
+            },
+            errorResponse: null,
+            curlExample: `# Example webhook payload sent to your endpoint
+# POST https://your-server.com/webhooks
+
+{
+  "event_type": "rate.changed",
+  "event_id": "evt_rate456",
+  "timestamp": 1701456789000,
+  "data": {
+    "application_id": null,
+    "application_name": null,
+    "environment": "production",
+    "currency": "USDC",
+    "protocol": "aave",
+    "old_rate": 0.055,
+    "new_rate": 0.062,
+    "change_percent": 12.7,
+    "timestamp": 1701456789000
+  }
+}`
+        },
+        'account-status-changed': {
+            method: 'EVENT',
+            path: 'account.status.changed',
+            title: 'account.status.changed',
+            summary: 'Triggered when a yield account status changes.',
+            description: 'This event is fired when a yield account transitions between states (e.g., active, paused, closed). Use this to update your UI and notify users of account status changes.',
+            permissions: 'Webhook subscription required',
+            requestBody: [
+                {
+                    name: 'application_id',
+                    type: 'string',
+                    required: false,
+                    description: 'The ID of the application associated with the account.'
+                },
+                {
+                    name: 'application_name',
+                    type: 'string',
+                    required: false,
+                    description: 'Human-readable name of the application.'
+                },
+                {
+                    name: 'environment',
+                    type: 'string',
+                    required: true,
+                    description: 'The environment where the status changed.',
+                    constraints: [{ type: 'enum', values: ['sandbox', 'production'] }]
+                },
+                {
+                    name: 'yield_account_id',
+                    type: 'string',
+                    required: true,
+                    description: 'The unique identifier of the yield account.'
+                },
+                {
+                    name: 'old_status',
+                    type: 'string',
+                    required: true,
+                    description: 'The previous account status.',
+                    constraints: [{ type: 'enum', values: ['active', 'paused', 'closed', 'pending'] }]
+                },
+                {
+                    name: 'new_status',
+                    type: 'string',
+                    required: true,
+                    description: 'The new account status.',
+                    constraints: [{ type: 'enum', values: ['active', 'paused', 'closed', 'pending'] }]
+                },
+                {
+                    name: 'timestamp',
+                    type: 'integer',
+                    required: true,
+                    description: 'Unix timestamp (milliseconds) when the event occurred.'
+                }
+            ],
+            successResponse: {
+                event_type: 'account.status.changed',
+                event_id: 'evt_status789',
+                timestamp: 1701456789000,
+                data: {
+                    application_id: 'app_1234567890abcdef',
+                    application_name: 'Production App',
+                    environment: 'production',
+                    yield_account_id: 'ya_xyz789',
+                    old_status: 'active',
+                    new_status: 'paused',
+                    timestamp: 1701456789000
+                }
+            },
+            errorResponse: null,
+            curlExample: `# Example webhook payload sent to your endpoint
+# POST https://your-server.com/webhooks
+
+{
+  "event_type": "account.status.changed",
+  "event_id": "evt_status789",
+  "timestamp": 1701456789000,
+  "data": {
+    "application_id": "app_1234567890abcdef",
+    "application_name": "Production App",
+    "environment": "production",
+    "yield_account_id": "ya_xyz789",
+    "old_status": "active",
+    "new_status": "paused",
+    "timestamp": 1701456789000
+  }
+}`
+        },
+        'application-created': {
+            method: 'EVENT',
+            path: 'application.created',
+            title: 'application.created',
+            summary: 'Triggered when a new application is created in your account.',
+            description: 'This event is fired when a new application is created via the API or dashboard. Use this for audit logging or to trigger onboarding workflows.',
+            permissions: 'Webhook subscription required',
+            requestBody: [
+                {
+                    name: 'application_id',
+                    type: 'string',
+                    required: true,
+                    description: 'The unique identifier of the newly created application.'
+                },
+                {
+                    name: 'application_name',
+                    type: 'string',
+                    required: true,
+                    description: 'The name given to the application.'
+                },
+                {
+                    name: 'environment',
+                    type: 'string',
+                    required: true,
+                    description: 'The environment(s) the application is configured for.',
+                    constraints: [{ type: 'enum', values: ['sandbox', 'production', 'both'] }]
+                },
+                {
+                    name: 'timestamp',
+                    type: 'integer',
+                    required: true,
+                    description: 'Unix timestamp (milliseconds) when the event occurred.'
+                }
+            ],
+            successResponse: {
+                event_type: 'application.created',
+                event_id: 'evt_app123',
+                timestamp: 1701456789000,
+                data: {
+                    application_id: 'app_newapp123',
+                    application_name: 'My New App',
+                    environment: 'both',
+                    timestamp: 1701456789000
+                }
+            },
+            errorResponse: null,
+            curlExample: `# Example webhook payload sent to your endpoint
+# POST https://your-server.com/webhooks
+
+{
+  "event_type": "application.created",
+  "event_id": "evt_app123",
+  "timestamp": 1701456789000,
+  "data": {
+    "application_id": "app_newapp123",
+    "application_name": "My New App",
+    "environment": "both",
+    "timestamp": 1701456789000
+  }
+}`
+        },
+        'api-key-created': {
+            method: 'EVENT',
+            path: 'api_key.created',
+            title: 'api_key.created',
+            summary: 'Triggered when a new API key is generated for an application.',
+            description: 'This event is fired when a new API key (access token) is created for an application. Use this for security auditing and monitoring API key creation.',
+            permissions: 'Webhook subscription required',
+            requestBody: [
+                {
+                    name: 'application_id',
+                    type: 'string',
+                    required: true,
+                    description: 'The ID of the application the API key was created for.'
+                },
+                {
+                    name: 'application_name',
+                    type: 'string',
+                    required: true,
+                    description: 'The name of the application.'
+                },
+                {
+                    name: 'token_id',
+                    type: 'string',
+                    required: true,
+                    description: 'The unique identifier of the new API key (not the key itself for security).'
+                },
+                {
+                    name: 'environment',
+                    type: 'string',
+                    required: true,
+                    description: 'The environment the API key is valid for.',
+                    constraints: [{ type: 'enum', values: ['sandbox', 'production'] }]
+                },
+                {
+                    name: 'timestamp',
+                    type: 'integer',
+                    required: true,
+                    description: 'Unix timestamp (milliseconds) when the event occurred.'
+                }
+            ],
+            successResponse: {
+                event_type: 'api_key.created',
+                event_id: 'evt_key456',
+                timestamp: 1701456789000,
+                data: {
+                    application_id: 'app_1234567890abcdef',
+                    application_name: 'Production App',
+                    token_id: 'tok_newkey789',
+                    environment: 'production',
+                    timestamp: 1701456789000
+                }
+            },
+            errorResponse: null,
+            curlExample: `# Example webhook payload sent to your endpoint
+# POST https://your-server.com/webhooks
+
+{
+  "event_type": "api_key.created",
+  "event_id": "evt_key456",
+  "timestamp": 1701456789000,
+  "data": {
+    "application_id": "app_1234567890abcdef",
+    "application_name": "Production App",
+    "token_id": "tok_newkey789",
+    "environment": "production",
+    "timestamp": 1701456789000
+  }
+}`
+        }
     }
 };
 
@@ -1336,6 +1959,8 @@ function initializePage() {
 }
 
 function populatePage(endpoint) {
+    const isWebhookEvent = endpoint.method === 'EVENT';
+    
     // Update title and description
     document.getElementById('api-title').textContent = endpoint.title;
     document.getElementById('api-description').textContent = endpoint.description;
@@ -1345,22 +1970,43 @@ function populatePage(endpoint) {
     const methodBadge = document.getElementById('method-badge');
     methodBadge.textContent = endpoint.method;
     methodBadge.className = `method-badge ${endpoint.method.toLowerCase()}`;
+    // Add purple background for EVENT type
+    if (isWebhookEvent) {
+        methodBadge.style.background = '#8b5cf6';
+        methodBadge.style.color = 'white';
+    }
     
     // Update endpoint info
     const endpointMethodBadge = document.getElementById('endpoint-method-badge');
     endpointMethodBadge.textContent = endpoint.method;
     endpointMethodBadge.className = `endpoint-method-badge ${endpoint.method.toLowerCase()}`;
+    if (isWebhookEvent) {
+        endpointMethodBadge.style.background = '#8b5cf6';
+        endpointMethodBadge.style.color = 'white';
+    }
     document.getElementById('endpoint-path-inline').textContent = endpoint.path;
     
-    // Update rate limit info
+    // Update rate limit info - hide for webhook events
     const rateLimit = getRateLimit(endpoint.method, endpoint.path);
     const rateLimitEl = document.getElementById('rate-limit-inline');
+    const rateLimitContainer = rateLimitEl?.closest('.endpoint-meta-item');
     if (rateLimitEl) {
-        rateLimitEl.textContent = `${rateLimit.limit} req/min`;
+        if (isWebhookEvent) {
+            if (rateLimitContainer) rateLimitContainer.style.display = 'none';
+        } else {
+            if (rateLimitContainer) rateLimitContainer.style.display = '';
+            rateLimitEl.textContent = `${rateLimit.limit} req/min`;
+        }
     }
     document.getElementById('permissions-inline').textContent = endpoint.permissions;
     
-    // Populate request body
+    // Update Request Body label for webhook events
+    const requestBodyLabel = document.querySelector('.detail-left h3');
+    if (requestBodyLabel && requestBodyLabel.textContent.includes('Request')) {
+        requestBodyLabel.textContent = isWebhookEvent ? 'Event Payload Fields' : 'Request body';
+    }
+    
+    // Populate request body / event payload
     const requestBody = document.getElementById('request-body');
     requestBody.innerHTML = '';
     
@@ -1370,21 +2016,60 @@ function populatePage(endpoint) {
             requestBody.appendChild(paramItem);
         });
     } else {
-        requestBody.innerHTML = '<p style="color: var(--text-secondary);">No request body required for this endpoint.</p>';
+        const emptyMessage = isWebhookEvent 
+            ? '<p style="color: var(--text-secondary);">No additional payload fields.</p>'
+            : '<p style="color: var(--text-secondary);">No request body required for this endpoint.</p>';
+        requestBody.innerHTML = emptyMessage;
     }
     
     // Populate responses with syntax highlighting
+    // For webhook events, show the payload as the success response
     const successJson = JSON.stringify(endpoint.successResponse, null, 2);
-    const errorJson = JSON.stringify(endpoint.errorResponse, null, 2);
+    const errorJson = endpoint.errorResponse ? JSON.stringify(endpoint.errorResponse, null, 2) : null;
     document.getElementById('success-response').innerHTML = highlightJsonLocal(successJson);
-    document.getElementById('error-response').innerHTML = highlightJsonLocal(errorJson);
     
-    // Populate CURL example
-    // Update curl example with current environment URL
-    updateCurlExample(endpoint.curlExample);
+    // For webhook events, update response labels
+    const successTab = document.querySelector('[data-tab="success-tab"]');
+    const errorTab = document.querySelector('[data-tab="error-tab"]');
+    if (isWebhookEvent) {
+        if (successTab) successTab.textContent = 'Example Payload';
+        if (errorTab) errorTab.style.display = 'none';
+    } else {
+        if (successTab) successTab.textContent = 'Success';
+        if (errorTab) errorTab.style.display = '';
+        if (errorJson) {
+            document.getElementById('error-response').innerHTML = highlightJsonLocal(errorJson);
+        }
+    }
     
-    // Set up environment toggle
-    setupEnvironmentToggle();
+    // Update example section header for webhook events
+    const exampleHeader = document.querySelector('.example-section .code-block-header .code-block-label');
+    if (exampleHeader) {
+        exampleHeader.textContent = isWebhookEvent ? 'Webhook Payload' : 'Example request';
+    }
+    
+    // Hide environment toggle for webhook events
+    const envToggle = document.querySelector('.env-toggle');
+    if (envToggle) {
+        envToggle.style.display = isWebhookEvent ? 'none' : '';
+    }
+    
+    // Populate CURL example / webhook payload
+    const curlExampleEl = document.getElementById('curl-example');
+    if (curlExampleEl) {
+        if (isWebhookEvent) {
+            // For webhook events, show JSON payload directly
+            curlExampleEl.innerHTML = highlightJsonLocal(endpoint.curlExample);
+        } else {
+            // Update curl example with current environment URL
+            updateCurlExample(endpoint.curlExample);
+        }
+    }
+    
+    // Set up environment toggle (only for non-webhook events)
+    if (!isWebhookEvent) {
+        setupEnvironmentToggle();
+    }
 }
 
 function createParamElement(param) {
