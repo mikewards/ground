@@ -206,15 +206,21 @@ object WebhookService {
      */
     suspend fun listEndpoints(accountId: UUID): List<EndpointOut> {
         if (svix == null) {
+            logger.warn("listEndpoints: Svix not configured")
             return emptyList()
         }
         
-        val appId = "app_$accountId"
+        // Ensure the application exists first
+        val appId = ensureApplication(accountId)
+        logger.debug("listEndpoints: Looking up endpoints for appId=$appId")
         
         return try {
-            svix.endpoint.list(appId, null).data ?: emptyList()
+            val result = svix.endpoint.list(appId, null)
+            val endpoints = result.data ?: emptyList()
+            logger.info("listEndpoints: Found ${endpoints.size} endpoints for account $accountId")
+            endpoints
         } catch (e: Exception) {
-            logger.error("Failed to list endpoints: ${e.message}")
+            logger.error("Failed to list endpoints for appId=$appId: ${e.message}", e)
             emptyList()
         }
     }
