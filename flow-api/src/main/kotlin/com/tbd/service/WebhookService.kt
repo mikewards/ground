@@ -384,6 +384,8 @@ object WebhookService {
         return try {
             val options = MessageListOptions()
             options.limit = 100 // Get up to 100 recent messages
+            // Must set eventTypes to empty list, not null
+            options.eventTypes = emptyList()
             val result = svix.message.list(appId, options)
             result.data?.size ?: 0
         } catch (e: Exception) {
