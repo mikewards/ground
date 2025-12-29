@@ -2003,7 +2003,7 @@ function populatePage(endpoint) {
     // Update Request Body label for webhook events
     const requestBodyLabel = document.querySelector('.detail-left h3');
     if (requestBodyLabel && requestBodyLabel.textContent.includes('Request')) {
-        requestBodyLabel.textContent = isWebhookEvent ? 'Event Payload Fields' : 'Request body';
+        requestBodyLabel.textContent = isWebhookEvent ? 'Response Body' : 'Request body';
     }
     
     // Populate request body / event payload
@@ -2025,7 +2025,7 @@ function populatePage(endpoint) {
     // Update example section header for webhook events
     const exampleHeader = document.querySelector('.example-section .code-block-header .code-block-label');
     if (exampleHeader) {
-        exampleHeader.textContent = isWebhookEvent ? 'Example Payload' : 'Example request';
+        exampleHeader.textContent = isWebhookEvent ? 'Example Response' : 'Example request';
     }
     
     // Hide entire response section for webhook events
