@@ -30,6 +30,7 @@ data class RefreshTokenResult(
  * - JWT access tokens (short-lived, 15 minutes) with embedded session ID
  * - HMAC-SHA256 hashed refresh tokens (long-lived, 30 days)
  * - Token rotation on refresh
+ * - Backwards compatibility with old plaintext tokens during migration
  */
 class TokenService {
     private val config = ConfigFactory.load()
@@ -122,7 +123,7 @@ class TokenService {
      */
     fun generateRefreshToken(accountId: UUID): RefreshTokenResult {
         val token = "tbd_refresh_${UUID.randomUUID().toString().replace("-", "")}"
-        val tokenHash = hmacSha256(token)
+        val tokenHashValue = hmacSha256(token)
         val tokenPrefixStr = token.take(TOKEN_PREFIX_LENGTH)
         val expiresAt = Instant.now().plusSeconds(REFRESH_TOKEN_LIFETIME_SEC)
         val now = Instant.now()
@@ -130,8 +131,9 @@ class TokenService {
         val tokenId = transaction {
             RefreshTokens.insert {
                 it[RefreshTokens.accountId] = accountId
-                it[RefreshTokens.tokenHash] = tokenHash
+                it[RefreshTokens.tokenHash] = tokenHashValue
                 it[RefreshTokens.tokenPrefix] = tokenPrefixStr
+                // Don't set legacy token column for new tokens
                 it[RefreshTokens.expiresAt] = expiresAt
                 it[RefreshTokens.createdAt] = now
             } get RefreshTokens.id
@@ -145,24 +147,38 @@ class TokenService {
      * Refresh an access token using a valid refresh token.
      * 
      * Security:
-     * - Token is hashed and looked up by hash (O(1) indexed lookup)
+     * - First tries hash-based lookup (new tokens)
+     * - Falls back to plaintext lookup (legacy tokens during migration)
      * - Old refresh token is revoked immediately (token rotation)
-     * - New refresh token is issued
+     * - New refresh token is issued with hash
      * 
-     * @return Tuple of (accessToken, refreshToken, accountId, newRefreshTokenId) or null if invalid
+     * @return RefreshResult or null if invalid
      */
     fun refreshAccessToken(refreshToken: String, sessionId: UUID? = null): RefreshResult? {
-        val tokenHash = hmacSha256(refreshToken)
+        val tokenHashValue = hmacSha256(refreshToken)
         
         return transaction {
             val now = Instant.now()
             
-            // Find valid refresh token by hash
-            val row = RefreshTokens.select { 
-                (RefreshTokens.tokenHash eq tokenHash) and 
+            // First try: Find by hash (new tokens)
+            var row = RefreshTokens.select { 
+                (RefreshTokens.tokenHash eq tokenHashValue) and 
                 (RefreshTokens.expiresAt greater now) and
                 (RefreshTokens.revokedAt.isNull())
             }.firstOrNull()
+            
+            // Fallback: Find by plaintext token (legacy tokens)
+            if (row == null) {
+                row = RefreshTokens.select { 
+                    (RefreshTokens.token eq refreshToken) and 
+                    (RefreshTokens.expiresAt greater now) and
+                    (RefreshTokens.revokedAt.isNull())
+                }.firstOrNull()
+                
+                if (row != null) {
+                    println("🔄 Found legacy plaintext token, will migrate to hash on rotation")
+                }
+            }
             
             if (row == null) {
                 println("❌ Refresh token not found or expired: ${refreshToken.take(20)}...")
@@ -174,12 +190,12 @@ class TokenService {
             
             // Revoke the old refresh token (token rotation)
             RefreshTokens.update({ RefreshTokens.id eq tokenId }) {
-                it[revokedAt] = now
+                it[RefreshTokens.revokedAt] = now
             }
             
             println("🔄 Rotating refresh token for account: $accountId")
             
-            // Generate new tokens
+            // Generate new tokens (always uses new hash format)
             val refreshResult = generateRefreshToken(accountId)
             val newAccessToken = generateAccessToken(accountId, sessionId)
             
@@ -201,7 +217,7 @@ class TokenService {
             val count = RefreshTokens.update({ 
                 (RefreshTokens.accountId eq accountId) and (RefreshTokens.revokedAt.isNull())
             }) {
-                it[revokedAt] = now
+                it[RefreshTokens.revokedAt] = now
             }
             println("🚪 Revoked $count refresh tokens for account: $accountId")
         }
