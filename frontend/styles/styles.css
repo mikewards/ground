@@ -1306,6 +1306,11 @@ select option {
     border-radius: 50%;
 }
 
+/* Red dot for error responses */
+.code-block-label.error::before {
+    background: #ef4444;
+}
+
 .code-copy-btn {
     display: flex;
     align-items: center;
