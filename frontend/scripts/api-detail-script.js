@@ -1767,6 +1767,11 @@ function updateCurlExample(curlExample) {
         updatedExample = updatedExample.replace(pattern, currentUrl);
     });
     
+    // Replace bearer token placeholder based on environment
+    const apiKeyPlaceholder = env === 'sandbox' ? 'YOUR_SANDBOX_API_KEY' : 'YOUR_PRODUCTION_API_KEY';
+    updatedExample = updatedExample.replace(/Bearer\s+sk_live_[a-zA-Z0-9_]+/g, `Bearer ${apiKeyPlaceholder}`);
+    updatedExample = updatedExample.replace(/Bearer\s+YOUR_(SANDBOX|PRODUCTION)_API_KEY/g, `Bearer ${apiKeyPlaceholder}`);
+    
     const curlExampleEl = document.getElementById('curl-example');
     if (curlExampleEl) {
         // Apply syntax highlighting
