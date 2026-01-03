@@ -191,12 +191,13 @@
     
     /* Mobile menu - closed state */
     .nav-links {
+        display: flex !important;
         position: fixed;
         top: 72px;
         left: 0;
         right: 0;
         bottom: 0;
-        background: var(--bg-white);
+        background: #ffffff !important;
         flex-direction: column;
         padding: 24px;
         gap: 0;
