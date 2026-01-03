@@ -87,6 +87,7 @@ const apiData = {
                     ]
                 }
             ],
+            successStatus: '201 Created',
             successResponse: {
                 account_id: 'ya_1234567890abcdef',
                 currency: 'USDC',
@@ -99,6 +100,7 @@ const apiData = {
                     currency: 'USDC'
                 }
             },
+            errorStatus: '400 Bad Request',
             errorResponse: {
                 error: {
                     code: 'INSUFFICIENT_FUNDS',
@@ -156,6 +158,7 @@ const apiData = {
                     ]
                 }
             ],
+            successStatus: '200 OK',
             successResponse: {
                 transaction_id: 'txn_1234567890abcdef',
                 account_id: 'ya_1234567890abcdef',
@@ -166,6 +169,7 @@ const apiData = {
                 status: 'pending',
                 created_at: '2025-01-15T10:30:00Z'
             },
+            errorStatus: '400 Bad Request',
             errorResponse: {
                 error: {
                     code: 'INVALID_CURRENCY',
@@ -221,6 +225,7 @@ const apiData = {
                     ]
                 }
             ],
+            successStatus: '200 OK',
             successResponse: {
                 transaction_id: 'txn_1234567890abcdef',
                 account_id: 'ya_1234567890abcdef',
@@ -232,6 +237,7 @@ const apiData = {
                 status: 'pending',
                 created_at: '2025-01-15T10:30:00Z'
             },
+            errorStatus: '400 Bad Request',
             errorResponse: {
                 error: {
                     code: 'INSUFFICIENT_BALANCE',
@@ -280,12 +286,14 @@ const apiData = {
                     ]
                 }
             ],
+            successStatus: '200 OK',
             successResponse: {
                 access_token: 'sk_live_temp_1234567890abcdef',
                 token_type: 'Bearer',
                 expires_in: 3600,
                 account_id: 'acc_1234567890'
             },
+            errorStatus: '401 Unauthorized',
             errorResponse: {
                 error: {
                     code: 'INVALID_CREDENTIALS',
@@ -342,12 +350,14 @@ const apiData = {
                     ]
                 }
             ],
+            successStatus: '201 Created',
             successResponse: {
                 account_id: 'acc_1234567890abcdef',
                 username: 'developer123',
                 created_at: '2025-01-15T10:30:00Z',
                 status: 'active'
             },
+            errorStatus: '409 Conflict',
             errorResponse: {
                 error: {
                     code: 'USERNAME_TAKEN',
@@ -395,6 +405,7 @@ const apiData = {
                     ]
                 }
             ],
+            successStatus: '201 Created',
             successResponse: {
                 token_id: 'tok_1234567890abcdef',
                 access_token: 'sk_live_1234567890abcdef',
@@ -402,6 +413,7 @@ const apiData = {
                 created_at: '2025-01-15T10:30:00Z',
                 expires_at: null
             },
+            errorStatus: '401 Unauthorized',
             errorResponse: {
                 error: {
                     code: 'UNAUTHORIZED',
@@ -520,6 +532,7 @@ const apiData = {
                     ]
                 }
             ],
+            successStatus: '201 Created',
             successResponse: {
                 application_id: 'app_1234567890abcdef',
                 name: 'My Production App',
@@ -533,6 +546,7 @@ const apiData = {
                 created_at: '2025-01-15T10:30:00Z',
                 updated_at: '2025-01-15T10:30:00Z'
             },
+            errorStatus: '400 Bad Request',
             errorResponse: {
                 error: {
                     code: 'INVALID_ENVIRONMENT',
@@ -563,6 +577,7 @@ const apiData = {
             description: 'Returns a list of all applications associated with your account.',
             permissions: 'APPLICATION_READ',
             requestBody: [],
+            successStatus: '200 OK',
             successResponse: {
                 applications: [
                     {
@@ -574,6 +589,7 @@ const apiData = {
                     }
                 ]
             },
+            errorStatus: '401 Unauthorized',
             errorResponse: {
                 error: {
                     code: 'UNAUTHORIZED',
@@ -615,6 +631,7 @@ const apiData = {
                     ]
                 }
             ],
+            successStatus: '201 Created',
             successResponse: {
                 wallet_id: 'wal_1234567890abcdef',
                 address: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
@@ -624,6 +641,7 @@ const apiData = {
                 status: 'active',
                 created_at: '2025-01-15T10:30:00Z'
             },
+            errorStatus: '404 Not Found',
             errorResponse: {
                 error: {
                     code: 'APPLICATION_NOT_FOUND',
@@ -648,6 +666,7 @@ const apiData = {
             description: 'Returns a list of all wallets associated with the specified application.',
             permissions: 'WALLET_READ',
             requestBody: [],
+            successStatus: '200 OK',
             successResponse: {
                 wallets: [
                     {
@@ -661,6 +680,7 @@ const apiData = {
                     }
                 ]
             },
+            errorStatus: '404 Not Found',
             errorResponse: {
                 error: {
                     code: 'APPLICATION_NOT_FOUND',
@@ -703,6 +723,7 @@ const apiData = {
                     ]
                 }
             ],
+            successStatus: '201 Created',
             successResponse: {
                 token_id: 'tok_1234567890abcdef',
                 application_id: 'app_1234567890abcdef',
@@ -714,6 +735,7 @@ const apiData = {
                 expires_at: null,
                 last_used_at: null
             },
+            errorStatus: '404 Not Found',
             errorResponse: {
                 error: {
                     code: 'APPLICATION_NOT_FOUND',
@@ -740,6 +762,7 @@ const apiData = {
             description: 'Retrieves current yield rates (APY) for supported currencies across both Morpho and Aave protocols.',
             permissions: 'YIELD_READ',
             requestBody: [],
+            successStatus: '200 OK',
             successResponse: {
                 rates: [
                     {
@@ -760,6 +783,7 @@ const apiData = {
                     }
                 ]
             },
+            errorStatus: '401 Unauthorized',
             errorResponse: {
                 error: {
                     code: 'UNAUTHORIZED',
@@ -781,6 +805,7 @@ const apiData = {
             description: 'Returns a list of all available yield markets from both Morpho and Aave protocols, including current APY rates and network information.',
             permissions: 'MARKETS_READ',
             requestBody: [],
+            successStatus: '200 OK',
             successResponse: {
                 markets: [
                     {
@@ -805,6 +830,7 @@ const apiData = {
                     }
                 ]
             },
+            errorStatus: '401 Unauthorized',
             errorResponse: {
                 error: {
                     code: 'UNAUTHORIZED',
@@ -828,6 +854,7 @@ const apiData = {
             description: 'Returns all event types that can trigger webhook notifications. This endpoint is public and does not require authentication.',
             permissions: 'PUBLIC',
             requestBody: [],
+            successStatus: '200 OK',
             successResponse: {
                 event_types: [
                     { name: 'deposit.completed', description: 'Triggered when funds are successfully deposited to a yield account' },
@@ -839,6 +866,7 @@ const apiData = {
                     { name: 'api_key.created', description: 'Triggered when a new API key is generated' }
                 ]
             },
+            errorStatus: '500 Internal Server Error',
             errorResponse: {
                 error: {
                     code: 'INTERNAL_ERROR',
@@ -881,6 +909,7 @@ const apiData = {
                     ]
                 }
             ],
+            successStatus: '201 Created',
             successResponse: {
                 id: 'ep_1234567890abcdef',
                 url: 'https://your-server.com/webhooks',
@@ -890,6 +919,7 @@ const apiData = {
                 updated_at: '2025-01-15T10:30:00Z',
                 disabled: false
             },
+            errorStatus: '400 Bad Request',
             errorResponse: {
                 error: {
                     code: 'INVALID_URL',
@@ -915,6 +945,7 @@ const apiData = {
             description: 'Returns a list of all webhook endpoints associated with your account.',
             permissions: 'WEBHOOK_READ',
             requestBody: [],
+            successStatus: '200 OK',
             successResponse: {
                 endpoints: [
                     {
@@ -929,6 +960,7 @@ const apiData = {
                 ],
                 total: 1
             },
+            errorStatus: '401 Unauthorized',
             errorResponse: {
                 error: {
                     code: 'UNAUTHORIZED',
@@ -947,6 +979,7 @@ const apiData = {
             description: 'Returns the details of a webhook endpoint by its ID.',
             permissions: 'WEBHOOK_READ',
             requestBody: [],
+            successStatus: '200 OK',
             successResponse: {
                 id: 'ep_1234567890abcdef',
                 url: 'https://your-server.com/webhooks',
@@ -956,6 +989,7 @@ const apiData = {
                 updated_at: '2025-01-15T10:30:00Z',
                 disabled: false
             },
+            errorStatus: '404 Not Found',
             errorResponse: {
                 error: {
                     code: 'NOT_FOUND',
@@ -974,7 +1008,9 @@ const apiData = {
             description: 'Permanently deletes a webhook endpoint. This action cannot be undone.',
             permissions: 'WEBHOOK_WRITE',
             requestBody: [],
+            successStatus: '204 No Content',
             successResponse: null,
+            errorStatus: '404 Not Found',
             errorResponse: {
                 error: {
                     code: 'NOT_FOUND',
@@ -1004,10 +1040,12 @@ const apiData = {
                     ]
                 }
             ],
+            successStatus: '200 OK',
             successResponse: {
                 success: true,
                 message: 'Test webhook sent successfully'
             },
+            errorStatus: '400 Bad Request',
             errorResponse: {
                 error: {
                     code: 'INVALID_EVENT_TYPE',
@@ -2043,6 +2081,20 @@ function populatePage(endpoint) {
         const successJson = JSON.stringify(endpoint.successResponse, null, 2);
         const errorJson = endpoint.errorResponse ? JSON.stringify(endpoint.errorResponse, null, 2) : null;
         document.getElementById('success-response').innerHTML = highlightJsonLocal(successJson);
+        
+        // Set success label with HTTP status code
+        const successLabel = document.getElementById('success-label');
+        if (successLabel) {
+            successLabel.textContent = endpoint.successStatus || '200 OK';
+            successLabel.classList.remove('error');
+        }
+        
+        // Set error label with HTTP status code
+        const errorLabel = document.getElementById('error-label');
+        if (errorLabel && endpoint.errorResponse) {
+            errorLabel.textContent = endpoint.errorStatus || '400 Bad Request';
+            errorLabel.classList.add('error');
+        }
         
         const successTab = document.querySelector('[data-tab="success-tab"]');
         const errorTab = document.querySelector('[data-tab="error-tab"]');
