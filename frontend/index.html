@@ -112,7 +112,7 @@
                         </div>
                         <div class="code-block-content">
                             <pre id="hero-curl-mobile" data-language="bash"><code><span class="token-cmd">curl</span> <span class="token-url">https://api.tbd.com/v1/yield/start</span> \
-  <span class="token-flag">-u</span> <span class="token-string">sk_live_...</span> \
+  <span class="token-flag">-u</span> <span class="token-string">YOUR_API_KEY</span> \
   <span class="token-flag">-d</span> <span class="token-string">"amount=1000"</span> \
   <span class="token-flag">-d</span> <span class="token-string">"currency=USDC"</span> \
   <span class="token-flag">-d</span> <span class="token-string">"yield_rate=0.06"</span>
@@ -149,7 +149,7 @@
                     </div>
                     <div class="code-block-content">
                         <pre id="hero-curl-desktop" data-language="bash"><code><span class="token-cmd">curl</span> <span class="token-url">https://api.tbd.com/v1/yield/start</span> \
-  <span class="token-flag">-u</span> <span class="token-string">sk_live_...</span> \
+  <span class="token-flag">-u</span> <span class="token-string">YOUR_API_KEY</span> \
   <span class="token-flag">-d</span> <span class="token-string">"amount=1000"</span> \
   <span class="token-flag">-d</span> <span class="token-string">"currency=USDC"</span> \
   <span class="token-flag">-d</span> <span class="token-string">"yield_rate=0.06"</span>
@@ -297,7 +297,7 @@
                         <div class="code-block-content">
                             <pre id="lang-code-nodejs" class="lang-code active" data-language="javascript"><code>const tbd = require('@tbd/api');
 
-tbd.apiKey = 'sk_live_...';
+tbd.apiKey = 'YOUR_API_KEY';
 
 // Start earning yield
 const account = await tbd.yield.create({
@@ -310,7 +310,7 @@ console.log(account.id);
 // => 'ya_1234...'</code></pre>
                             <pre id="lang-code-python" class="lang-code" data-language="python"><code>import tbd
 
-tbd.api_key = 'sk_live_...'
+tbd.api_key = 'YOUR_API_KEY'
 
 # Start earning yield
 account = tbd.yield.create(
@@ -323,7 +323,7 @@ print(account.id)
 # => 'ya_1234...'</code></pre>
                             <pre id="lang-code-ruby" class="lang-code" data-language="ruby"><code>require 'tbd'
 
-tbd.api_key = 'sk_live_...'
+tbd.api_key = 'YOUR_API_KEY'
 
 # Start earning yield
 account = tbd.yield.create(
