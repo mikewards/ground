@@ -1,7 +1,7 @@
 /* API Reference Styles */
 
 .api-header {
-    background: var(--bg-white);
+    background: transparent;
     border-bottom: 1px solid var(--border);
     padding: 48px 0;
 }
