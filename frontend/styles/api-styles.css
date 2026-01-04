@@ -436,7 +436,7 @@
 .guide-section li .code-block code,
 .code-block code,
 .code-block pre {
-    background: #1E293B !important;
+    background: #455162 !important;
     color: #E2E8F0 !important;
 }
 
@@ -498,7 +498,7 @@
 }
 
 .code-example-box {
-    background: #1E293B;
+    background: #455162;
     border-radius: 8px;
     padding: 24px;
     margin: 24px 0;
