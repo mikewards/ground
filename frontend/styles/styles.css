@@ -33,11 +33,13 @@ body {
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
     max-width: 100vw;
-    background: var(--bg-white);
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
 }
 
 main {
-    background: var(--bg-white);
+    background: transparent;
     animation: fadeInUp 0.3s ease-out;
 }
 
@@ -121,8 +123,10 @@ a.text-link:not(.btn):hover {
 
 /* Navigation */
 .navbar {
-    background: var(--bg-white);
-    border-bottom: 1px solid var(--border);
+    background: rgba(248, 250, 252, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -321,7 +325,7 @@ select option {
 /* Hero Section - Square-inspired: Clean, minimal */
 .hero {
     padding: 80px 0 40px;
-    background: var(--bg-white);
+    background: transparent;
 }
 
 .hero .container {
@@ -536,9 +540,9 @@ select option {
 /* Trust Section */
 .trust {
     padding: 48px 0;
-    background: var(--bg-white);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+    background: transparent;
+    border-top: 1px solid rgba(226, 232, 240, 0.5);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
 }
 
 .trust-text {
@@ -568,7 +572,7 @@ select option {
 /* Features Section */
 .features {
     padding: 40px 0 100px 0;
-    background: var(--bg-white);
+    background: transparent;
 }
 
 .section-header {
@@ -766,7 +770,7 @@ select option {
 /* Security Section */
 .security {
     padding: 120px 0;
-    background: var(--bg-white);
+    background: transparent;
 }
 
 .security-content {
@@ -910,8 +914,8 @@ select option {
 /* Footer */
 .footer {
     padding: 80px 0 32px;
-    background: var(--bg-white);
-    border-top: 1px solid var(--border);
+    background: transparent;
+    border-top: 1px solid rgba(226, 232, 240, 0.5);
 }
 
 .footer-content {
@@ -1257,7 +1261,7 @@ select option {
 /* Legal Pages */
 .legal-page {
     padding: 120px 0 80px;
-    background: var(--bg-white);
+    background: transparent;
 }
 
 .legal-content {
