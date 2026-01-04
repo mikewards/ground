@@ -428,8 +428,28 @@ select option {
 .stat-value {
     font-size: 32px;
     font-weight: 700;
-    color: var(--accent);
     margin-bottom: 4px;
+    background: linear-gradient(
+        90deg,
+        #10b981 0%,
+        #06b6d4 33%,
+        #3b82f6 66%,
+        #10b981 100%
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: stat-gradient 5s ease infinite;
+}
+
+@keyframes stat-gradient {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 .stat-label {
