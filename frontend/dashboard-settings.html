@@ -349,6 +349,60 @@
             opacity: 0.5;
             pointer-events: none;
         }
+        
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .settings-container {
+                max-width: 100%;
+                padding: 0 16px;
+            }
+            
+            .settings-section {
+                padding: 20px 16px;
+                margin-bottom: 20px;
+            }
+            
+            .settings-field {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px 0;
+            }
+            
+            .field-action {
+                width: 100%;
+            }
+            
+            .btn-text {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .session-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .btn-revoke {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .modal {
+                max-width: 90%;
+                margin: 20px;
+                padding: 20px;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
+            
+            .modal-actions button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
