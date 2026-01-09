@@ -308,7 +308,7 @@ a.text-link:not(.btn):hover {
 }
 
 .btn-split:hover .btn-arrow svg {
-    transform: rotate(-45deg);
+    transform: rotate(-45deg) translateZ(0);
 }
 
 .btn-split:hover .btn-arrow {
