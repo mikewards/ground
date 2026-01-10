@@ -257,6 +257,84 @@ a.text-link:not(.btn):hover {
     font-size: 16px;
 }
 
+/* Split Button Design (Square-style) */
+.btn-split {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    text-decoration: none;
+}
+
+.btn-split .btn-text {
+    padding: 14px 20px 14px 28px;
+    display: inline-flex;
+    align-items: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.btn-split.btn-secondary .btn-text {
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn-split .btn-arrow {
+    padding: 14px 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    min-width: 48px;
+}
+
+.btn-split.btn-primary .btn-arrow {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.btn-split.btn-secondary .btn-arrow {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.btn-split .btn-arrow svg {
+    transition: transform 0.2s ease;
+    transform: rotate(0deg);
+}
+
+.btn-split:hover .btn-arrow svg {
+    transform: rotate(45deg);
+}
+
+.btn-split:hover .btn-arrow {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.btn-split.btn-primary:hover .btn-arrow {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.btn-split.btn-secondary:hover .btn-arrow {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+/* Ensure split buttons maintain hover effects */
+.btn-split.btn-primary:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.btn-split.btn-secondary:hover {
+    background: var(--bg-gray-dark);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
 .btn-link {
     color: var(--primary);
     text-decoration: none;
