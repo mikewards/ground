@@ -265,6 +265,7 @@ function addLineNumbers(codeBlock) {
     lineNumbers.className = 'code-line-numbers';
     
     // Generate one line number per source line
+    // Each span will be exactly one line-height tall, aligning with first visual line
     for (let i = 1; i <= sourceLineCount; i++) {
         const span = document.createElement('span');
         span.textContent = i;
@@ -274,30 +275,9 @@ function addLineNumbers(codeBlock) {
     // Insert before pre
     content.insertBefore(lineNumbers, pre);
     
-    // After rendering, ensure line numbers container matches pre height
-    // This allows wrapped lines to have space, but only source lines are numbered
-    setTimeout(() => {
-        const preHeight = pre.scrollHeight || pre.offsetHeight;
-        const lineNumbersHeight = lineNumbers.scrollHeight || lineNumbers.offsetHeight;
-        if (Math.abs(preHeight - lineNumbersHeight) > 1) {
-            lineNumbers.style.height = preHeight + 'px';
-            lineNumbers.style.minHeight = preHeight + 'px';
-        }
-    }, 100);
-    
-    // Recalculate on window resize
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            const preHeight = pre.scrollHeight || pre.offsetHeight;
-            const lineNumbersHeight = lineNumbers.scrollHeight || lineNumbers.offsetHeight;
-            if (Math.abs(preHeight - lineNumbersHeight) > 1) {
-                lineNumbers.style.height = preHeight + 'px';
-                lineNumbers.style.minHeight = preHeight + 'px';
-            }
-        }, 100);
-    });
+    // DO NOT match container height to pre height
+    // Let line numbers be naturally sized (one line-height per source line)
+    // Wrapped lines will naturally have no number because there's no span for them
 }
 
 // Auto-initialize code blocks on page load

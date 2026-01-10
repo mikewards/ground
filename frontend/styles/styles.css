@@ -1726,11 +1726,9 @@ select option {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    /* Ensure line numbers container matches pre height */
-    align-self: stretch;
-    /* Ensure all line numbers are visible - no clipping */
-    overflow: visible;
-    min-height: 100%;
+    /* Do NOT stretch to match pre height - let it be naturally sized */
+    /* Each span is one line-height, aligning with first visual line of each source line */
+    align-self: flex-start;
 }
 
 /* Show line numbers more prominently on hover */
@@ -1770,9 +1768,12 @@ select option {
     line-height: 1.7;
     color: rgba(255, 255, 255, 0.3);
     flex-shrink: 0;
-    /* Each span represents ONE source line */
-    /* The line-height matches the code, so when a source line wraps,
-       the line number will naturally span multiple visual lines */
+    /* Each span is exactly ONE line-height tall */
+    /* It aligns with the FIRST visual line of its source line */
+    /* Wrapped continuation lines have no span, so no number */
+    height: calc(1.7em);
+    min-height: calc(1.7em);
+    max-height: calc(1.7em);
 }
 
 /* Language code block switching */
