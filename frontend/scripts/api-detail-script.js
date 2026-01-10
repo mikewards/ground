@@ -2146,15 +2146,28 @@ function populatePage(endpoint) {
 // Add line numbers to code blocks on API detail page
 // Uses the same approach as script.js - wrapping each source line with inline numbers
 function addLineNumbersToApiDetailBlocks() {
-    document.querySelectorAll('.code-block-unified').forEach(codeBlock => {
+    console.log('🔢 addLineNumbersToApiDetailBlocks called');
+    const blocks = document.querySelectorAll('.code-block-unified');
+    console.log('🔢 Found', blocks.length, 'code-block-unified elements');
+    
+    blocks.forEach((codeBlock, blockIndex) => {
         const content = codeBlock.querySelector('.code-block-content');
-        if (!content) return;
+        if (!content) {
+            console.log('🔢 Block', blockIndex, ': no .code-block-content found');
+            return;
+        }
         
         const pre = content.querySelector('pre');
-        if (!pre) return;
+        if (!pre) {
+            console.log('🔢 Block', blockIndex, ': no pre found');
+            return;
+        }
         
         // Skip if already processed
-        if (pre.dataset.lineNumbersAdded) return;
+        if (pre.dataset.lineNumbersAdded) {
+            console.log('🔢 Block', blockIndex, ': already processed');
+            return;
+        }
         pre.dataset.lineNumbersAdded = 'true';
         
         // Get the code element or use pre directly
@@ -2165,6 +2178,7 @@ function addLineNumbersToApiDetailBlocks() {
         
         // Split by newlines
         const lines = htmlContent.split('\n');
+        console.log('🔢 Block', blockIndex, ': found', lines.length, 'lines');
         
         // Wrap each line in a span with line number
         const wrappedLines = lines.map((line, index) => {
@@ -2176,6 +2190,7 @@ function addLineNumbersToApiDetailBlocks() {
         
         // Add class to pre for CSS styling
         pre.classList.add('has-line-numbers');
+        console.log('🔢 Block', blockIndex, ': line numbers added, pre has class:', pre.className);
     });
 }
 
