@@ -130,12 +130,17 @@ a.text-link:not(.btn):hover {
     z-index: 1000;
 }
 
-/* Desktop: add blur effect for polish */
+/* Desktop: add blur effect for polish and taller header */
 @media (min-width: 769px) {
     .navbar {
         background: rgba(248, 250, 252, 0.85);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
+    }
+    
+    .nav-content {
+        min-height: 58px; /* 20% taller than mobile (48px * 1.2) */
+        padding: 12px 0; /* Increased padding to center content */
     }
 }
 
