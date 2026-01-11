@@ -251,28 +251,34 @@ function addLineNumbers(codeBlock) {
         return;
     }
     
-    // Count lines using the most reliable method
+    // Count VISUAL lines (accounting for text wrapping)
+    // We need to count the actual rendered lines, not just source newlines
     const codeText = pre.textContent || pre.innerText || '';
     
-    // Method 1: Count newline characters directly
-    // Every \n creates a new line, so count = number of \n + 1
+    // First, ensure the pre element is rendered so we can measure it
+    // Get the computed line-height (defaults to 1.7 if not set)
+    const computedStyle = window.getComputedStyle(pre);
+    const lineHeight = parseFloat(computedStyle.lineHeight) || 1.7;
+    const fontSize = parseFloat(computedStyle.fontSize) || 13;
+    const actualLineHeight = fontSize * lineHeight; // Actual pixel line height
+    
+    // Get the scroll height (full content height including wrapped lines)
+    const scrollHeight = pre.scrollHeight || pre.offsetHeight;
+    
+    // Calculate number of visual lines: height / line-height, rounded up
+    // Also account for padding (top and bottom padding of 16px each = 32px total)
+    const paddingTop = parseFloat(computedStyle.paddingTop) || 16;
+    const paddingBottom = parseFloat(computedStyle.paddingBottom) || 16;
+    const contentHeight = scrollHeight - paddingTop - paddingBottom;
+    let visualLineCount = Math.ceil(contentHeight / actualLineHeight);
+    
+    // Fallback: count source newlines if visual calculation fails
     const newlineMatches = codeText.match(/\n/g);
     const newlineCount = newlineMatches ? newlineMatches.length : 0;
-    const method1Count = codeText.length > 0 ? newlineCount + 1 : 0;
+    const sourceLineCount = codeText.length > 0 ? newlineCount + 1 : 0;
     
-    // Method 2: Split by newline
-    const lines = codeText.split('\n');
-    const method2Count = lines.length;
-    
-    // Method 3: If text ends with \n, there's an extra line after the last \n
-    // If text doesn't end with \n, the last element of split is still a line
-    // So split.length should always be correct, but let's verify
-    let method3Count = lines.length;
-    // If the last element is empty string and text doesn't end with \n, 
-    // that's still a valid line (empty line at the end)
-    
-    // Use the maximum of all methods to ensure we don't miss any lines
-    let lineCount = Math.max(method1Count, method2Count, method3Count);
+    // Use the maximum to ensure we don't miss any lines
+    let lineCount = Math.max(visualLineCount, sourceLineCount);
     
     // Safety check: if we have any text at all, we have at least 1 line
     if (codeText.length > 0 && lineCount === 0) {
@@ -293,17 +299,39 @@ function addLineNumbers(codeBlock) {
     // Insert before pre
     content.insertBefore(lineNumbers, pre);
     
-    // After DOM insertion, ensure line numbers container matches pre height exactly
+    // After DOM insertion, recalculate based on actual rendered height
+    // This ensures we account for any wrapping that occurs after rendering
     setTimeout(() => {
+        // Re-measure after rendering
+        const computedStyle = window.getComputedStyle(pre);
+        const lineHeight = parseFloat(computedStyle.lineHeight) || 1.7;
+        const fontSize = parseFloat(computedStyle.fontSize) || 13;
+        const actualLineHeight = fontSize * lineHeight;
+        const paddingTop = parseFloat(computedStyle.paddingTop) || 16;
+        const paddingBottom = parseFloat(computedStyle.paddingBottom) || 16;
+        const scrollHeight = pre.scrollHeight || pre.offsetHeight;
+        const contentHeight = scrollHeight - paddingTop - paddingBottom;
+        const actualVisualLines = Math.ceil(contentHeight / actualLineHeight);
+        
+        // If we need more line numbers, add them
+        if (actualVisualLines > lineCount) {
+            for (let i = lineCount + 1; i <= actualVisualLines; i++) {
+                const span = document.createElement('span');
+                span.textContent = i;
+                lineNumbers.appendChild(span);
+            }
+            lineCount = actualVisualLines;
+        }
+        
+        // Ensure line numbers container matches pre height exactly
         const preHeight = pre.scrollHeight || pre.offsetHeight;
         const lineNumbersHeight = lineNumbers.scrollHeight || lineNumbers.offsetHeight;
         
-        // Force line numbers to match pre height if they don't
         if (Math.abs(preHeight - lineNumbersHeight) > 1) {
             lineNumbers.style.height = preHeight + 'px';
             lineNumbers.style.minHeight = preHeight + 'px';
         }
-    }, 50);
+    }, 100);
 }
 
 // Auto-initialize code blocks on page load
@@ -396,13 +424,22 @@ document.addEventListener('DOMContentLoaded', function() {
         if (content && pre && !content.querySelector('.code-line-numbers')) {
             const codeText = pre.textContent || pre.innerText || '';
             
-            // Count lines using the same reliable method
+            // Count visual lines (accounting for wrapping)
+            const computedStyle = window.getComputedStyle(pre);
+            const lineHeight = parseFloat(computedStyle.lineHeight) || 1.7;
+            const fontSize = parseFloat(computedStyle.fontSize) || 13;
+            const actualLineHeight = fontSize * lineHeight;
+            const paddingTop = parseFloat(computedStyle.paddingTop) || 16;
+            const paddingBottom = parseFloat(computedStyle.paddingBottom) || 16;
+            const scrollHeight = pre.scrollHeight || pre.offsetHeight;
+            const contentHeight = scrollHeight - paddingTop - paddingBottom;
+            let visualLineCount = Math.ceil(contentHeight / actualLineHeight);
+            
+            // Fallback to source line count
             const newlineMatches = codeText.match(/\n/g);
             const newlineCount = newlineMatches ? newlineMatches.length : 0;
-            const method1Count = codeText.length > 0 ? newlineCount + 1 : 0;
-            const lines = codeText.split('\n');
-            const method2Count = lines.length;
-            let lineCount = Math.max(method1Count, method2Count);
+            const sourceLineCount = codeText.length > 0 ? newlineCount + 1 : 0;
+            let lineCount = Math.max(visualLineCount, sourceLineCount);
             if (codeText.length > 0 && lineCount === 0) {
                 lineCount = 1;
             }
@@ -418,15 +455,34 @@ document.addEventListener('DOMContentLoaded', function() {
             
             content.insertBefore(lineNumbers, pre);
             
-            // Ensure line numbers match pre height
+            // Ensure line numbers match pre height and account for wrapping
             setTimeout(() => {
+                const computedStyle = window.getComputedStyle(pre);
+                const lineHeight = parseFloat(computedStyle.lineHeight) || 1.7;
+                const fontSize = parseFloat(computedStyle.fontSize) || 13;
+                const actualLineHeight = fontSize * lineHeight;
+                const paddingTop = parseFloat(computedStyle.paddingTop) || 16;
+                const paddingBottom = parseFloat(computedStyle.paddingBottom) || 16;
+                const scrollHeight = pre.scrollHeight || pre.offsetHeight;
+                const contentHeight = scrollHeight - paddingTop - paddingBottom;
+                const actualVisualLines = Math.ceil(contentHeight / actualLineHeight);
+                
+                // Add more line numbers if needed
+                if (actualVisualLines > lineCount) {
+                    for (let i = lineCount + 1; i <= actualVisualLines; i++) {
+                        const span = document.createElement('span');
+                        span.textContent = i;
+                        lineNumbers.appendChild(span);
+                    }
+                }
+                
                 const preHeight = pre.scrollHeight || pre.offsetHeight;
                 const lineNumbersHeight = lineNumbers.scrollHeight || lineNumbers.offsetHeight;
                 if (Math.abs(preHeight - lineNumbersHeight) > 1) {
                     lineNumbers.style.height = preHeight + 'px';
                     lineNumbers.style.minHeight = preHeight + 'px';
                 }
-            }, 50);
+            }, 100);
         }
     });
 });
@@ -462,15 +518,24 @@ document.addEventListener('DOMContentLoaded', function() {
             existing.remove();
         }
         
-        // Count lines for active pre using the same reliable method
+        // Count visual lines for active pre (accounting for wrapping)
         const codeText = activePre.textContent || activePre.innerText || '';
         
+        const computedStyle = window.getComputedStyle(activePre);
+        const lineHeight = parseFloat(computedStyle.lineHeight) || 1.7;
+        const fontSize = parseFloat(computedStyle.fontSize) || 13;
+        const actualLineHeight = fontSize * lineHeight;
+        const paddingTop = parseFloat(computedStyle.paddingTop) || 16;
+        const paddingBottom = parseFloat(computedStyle.paddingBottom) || 16;
+        const scrollHeight = activePre.scrollHeight || activePre.offsetHeight;
+        const contentHeight = scrollHeight - paddingTop - paddingBottom;
+        let visualLineCount = Math.ceil(contentHeight / actualLineHeight);
+        
+        // Fallback to source line count
         const newlineMatches = codeText.match(/\n/g);
         const newlineCount = newlineMatches ? newlineMatches.length : 0;
-        const method1Count = codeText.length > 0 ? newlineCount + 1 : 0;
-        const lines = codeText.split('\n');
-        const method2Count = lines.length;
-        let lineCount = Math.max(method1Count, method2Count);
+        const sourceLineCount = codeText.length > 0 ? newlineCount + 1 : 0;
+        let lineCount = Math.max(visualLineCount, sourceLineCount);
         if (codeText.length > 0 && lineCount === 0) {
             lineCount = 1;
         }
@@ -485,15 +550,34 @@ document.addEventListener('DOMContentLoaded', function() {
             lineNumbers.appendChild(span);
         }
         
-        // After inserting, ensure line numbers match pre height
+        // After inserting, recalculate and ensure line numbers match pre height
         setTimeout(() => {
+            const computedStyle = window.getComputedStyle(activePre);
+            const lineHeight = parseFloat(computedStyle.lineHeight) || 1.7;
+            const fontSize = parseFloat(computedStyle.fontSize) || 13;
+            const actualLineHeight = fontSize * lineHeight;
+            const paddingTop = parseFloat(computedStyle.paddingTop) || 16;
+            const paddingBottom = parseFloat(computedStyle.paddingBottom) || 16;
+            const scrollHeight = activePre.scrollHeight || activePre.offsetHeight;
+            const contentHeight = scrollHeight - paddingTop - paddingBottom;
+            const actualVisualLines = Math.ceil(contentHeight / actualLineHeight);
+            
+            // Add more line numbers if needed
+            if (actualVisualLines > lineCount) {
+                for (let i = lineCount + 1; i <= actualVisualLines; i++) {
+                    const span = document.createElement('span');
+                    span.textContent = i;
+                    lineNumbers.appendChild(span);
+                }
+            }
+            
             const preHeight = activePre.scrollHeight || activePre.offsetHeight;
             const lineNumbersHeight = lineNumbers.scrollHeight || lineNumbers.offsetHeight;
             if (Math.abs(preHeight - lineNumbersHeight) > 1) {
                 lineNumbers.style.height = preHeight + 'px';
                 lineNumbers.style.minHeight = preHeight + 'px';
             }
-        }, 50);
+        }, 100);
         
         // Insert at the beginning of content (before all pre elements)
         const firstChild = content.firstChild;
