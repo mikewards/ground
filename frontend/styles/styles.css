@@ -1769,9 +1769,16 @@ select option {
     font-size: 13px;
     line-height: 1.7;
     color: rgba(255, 255, 255, 0.3);
-    /* Each span represents ONE source line, which may wrap to multiple visual lines */
-    /* The line-height matches the code, so wrapped lines will have empty space */
     flex-shrink: 0;
+    /* Each span represents ONE source line */
+    /* Height will be set dynamically to match the source line's visual height */
+}
+
+.code-line-numbers span.line-number-source {
+    /* Source line number - height set by JS to match wrapped lines */
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
 }
 
 /* Language code block switching */

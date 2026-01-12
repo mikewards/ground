@@ -257,48 +257,108 @@ function addLineNumbers(codeBlock) {
     
     // Split by newline to get source lines
     const sourceLines = codeText.split('\n');
-    // Count source lines - each element in the array is a source line
-    // If the last element is empty and text ends with \n, it's still a line
     let sourceLineCount = sourceLines.length;
-    
-    // Safety: ensure we have at least 1 line if there's any text
     if (codeText.length > 0 && sourceLineCount === 0) {
         sourceLineCount = 1;
     }
-    
-    // We only number SOURCE lines, not wrapped visual lines
-    const lineCount = sourceLineCount;
     
     // Create line numbers element
     const lineNumbers = document.createElement('div');
     lineNumbers.className = 'code-line-numbers';
     
-    // Generate line numbers for ALL lines (1 to lineCount inclusive)
-    for (let i = 1; i <= lineCount; i++) {
+    // Create a temporary clone to measure each source line's height
+    const tempPre = pre.cloneNode(true);
+    tempPre.style.visibility = 'hidden';
+    tempPre.style.position = 'absolute';
+    tempPre.style.top = '-9999px';
+    tempPre.style.width = pre.offsetWidth + 'px';
+    document.body.appendChild(tempPre);
+    
+    // Function to measure height of a specific source line
+    function measureSourceLineHeight(lineIndex) {
+        // Get all source lines
+        const lines = codeText.split('\n');
+        if (lineIndex >= lines.length) return 0;
+        
+        // Create a test element with just this line
+        const testPre = document.createElement('pre');
+        testPre.style.cssText = window.getComputedStyle(pre).cssText;
+        testPre.style.visibility = 'hidden';
+        testPre.style.position = 'absolute';
+        testPre.style.top = '-9999px';
+        testPre.style.width = pre.offsetWidth + 'px';
+        testPre.textContent = lines[lineIndex];
+        document.body.appendChild(testPre);
+        
+        const height = testPre.offsetHeight;
+        document.body.removeChild(testPre);
+        return height;
+    }
+    
+    // Generate line numbers - one per source line
+    for (let i = 1; i <= sourceLineCount; i++) {
         const span = document.createElement('span');
         span.textContent = i;
+        span.className = 'line-number-source';
         lineNumbers.appendChild(span);
     }
+    
+    // Clean up temp element
+    document.body.removeChild(tempPre);
     
     // Insert before pre
     content.insertBefore(lineNumbers, pre);
     
-    // After rendering, ensure line numbers container matches pre height
-    // This allows wrapped lines to have space, but only source lines are numbered
+    // After rendering, calculate actual heights and adjust
     setTimeout(() => {
+        const computedStyle = window.getComputedStyle(pre);
+        const lineHeight = parseFloat(computedStyle.lineHeight);
+        const fontSize = parseFloat(computedStyle.fontSize) || 13;
+        const actualLineHeight = (lineHeight > 10) ? lineHeight : (fontSize * lineHeight);
+        
+        // Get the code element inside pre
+        const codeElement = pre.querySelector('code');
+        if (codeElement) {
+            // Split by newlines and measure each source line
+            const lines = codeText.split('\n');
+            const lineNumberSpans = lineNumbers.querySelectorAll('.line-number-source');
+            
+            // For each source line, calculate how many visual lines it takes
+            lines.forEach((line, index) => {
+                if (index < lineNumberSpans.length) {
+                    // Create a test to measure this line's height
+                    const testDiv = document.createElement('div');
+                    testDiv.style.cssText = window.getComputedStyle(codeElement).cssText;
+                    testDiv.style.visibility = 'hidden';
+                    testDiv.style.position = 'absolute';
+                    testDiv.style.top = '-9999px';
+                    testDiv.style.width = codeElement.offsetWidth + 'px';
+                    testDiv.textContent = line;
+                    document.body.appendChild(testDiv);
+                    
+                    const lineHeightPx = testDiv.offsetHeight;
+                    document.body.removeChild(testDiv);
+                    
+                    // Set the span height to match the source line's visual height
+                    const visualLines = Math.ceil(lineHeightPx / actualLineHeight);
+                    lineNumberSpans[index].style.height = (visualLines * actualLineHeight) + 'px';
+                    lineNumberSpans[index].style.minHeight = (visualLines * actualLineHeight) + 'px';
+                }
+            });
+        }
+        
+        // Ensure container matches total height
         const preHeight = pre.scrollHeight || pre.offsetHeight;
         const lineNumbersHeight = lineNumbers.scrollHeight || lineNumbers.offsetHeight;
-        
-        // Match the height so wrapped lines have space, but we only number source lines
         if (Math.abs(preHeight - lineNumbersHeight) > 1) {
             lineNumbers.style.height = preHeight + 'px';
             lineNumbers.style.minHeight = preHeight + 'px';
         }
-    }, 100);
+    }, 200);
     
-    // Recalculate on window resize (wrapping may change)
+    // Recalculate on window resize
     let resizeTimeout;
-    window.addEventListener('resize', () => {
+    const recalcOnResize = () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
             const preHeight = pre.scrollHeight || pre.offsetHeight;
@@ -308,7 +368,8 @@ function addLineNumbers(codeBlock) {
                 lineNumbers.style.minHeight = preHeight + 'px';
             }
         }, 100);
-    });
+    };
+    window.addEventListener('resize', recalcOnResize);
 }
 
 // Auto-initialize code blocks on page load
