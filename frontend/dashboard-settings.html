@@ -482,6 +482,15 @@
                     </svg>
                     Applications
                 </a>
+                <a href="dashboard-team.html" class="secondary-nav-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    Team
+                </a>
                 <a href="dashboard-webhooks.html" class="secondary-nav-link">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -605,6 +614,37 @@
                     
                     <div style="margin-top: 16px; text-align: right;">
                         <button class="btn-text" id="revokeAllBtn" style="color: #DC2626;">Revoke All Other Sessions</button>
+                    </div>
+                </div>
+                
+                <!-- Admin Section (Legacy Migration) -->
+                <div class="settings-section" id="adminSection" style="display: none;">
+                    <h2>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        Admin Tools
+                    </h2>
+                    <p>Advanced account management options.</p>
+                    
+                    <div class="settings-field">
+                        <div class="field-info">
+                            <div class="field-label">Account Migration</div>
+                            <div class="field-value">Migrate your account to enable team features (Role-Based Access Control).</div>
+                        </div>
+                        <div class="field-action">
+                            <button class="btn-primary" id="runMigrationBtn" style="background: #6366f1;">Run Migration</button>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-field">
+                        <div class="field-info">
+                            <div class="field-label">Migration Status</div>
+                            <div class="field-value" id="migrationStatusValue">Not started</div>
+                        </div>
+                        <div class="field-action">
+                            <button class="btn-text" id="checkMigrationStatusBtn">Check Status</button>
+                        </div>
                     </div>
                 </div>
                 
@@ -780,9 +820,22 @@
             setupEventListeners();
             
             // Update username in nav
-            const username = localStorage.getItem('tbd_username');
+            const username = localStorage.getItem('tbd_user_name') || localStorage.getItem('tbd_username');
             if (username) {
                 document.getElementById('userInfo').textContent = username;
+            }
+            
+            // Show admin section for legacy accounts
+            const authMode = localStorage.getItem('tbd_auth_mode');
+            if (authMode !== 'rcac') {
+                document.getElementById('adminSection').style.display = 'block';
+            }
+            
+            // Check for hash to scroll to admin section
+            if (window.location.hash === '#admin') {
+                setTimeout(() => {
+                    document.getElementById('adminSection').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
             }
         });
         
@@ -880,6 +933,18 @@
             document.getElementById('signOutBtn').addEventListener('click', function() {
                 TokenManager.logout();
             });
+            
+            // Migration buttons
+            const runMigrationBtn = document.getElementById('runMigrationBtn');
+            const checkMigrationStatusBtn = document.getElementById('checkMigrationStatusBtn');
+            
+            if (runMigrationBtn) {
+                runMigrationBtn.addEventListener('click', runMigration);
+            }
+            
+            if (checkMigrationStatusBtn) {
+                checkMigrationStatusBtn.addEventListener('click', checkMigrationStatus);
+            }
             
             // Dashboard dropdown
             const dropdownBtn = document.getElementById('dashboardDropdownBtn');
@@ -1102,6 +1167,58 @@
                 month: 'short',
                 day: 'numeric'
             });
+        }
+        
+        // Migration functions
+        async function runMigration() {
+            const btn = document.getElementById('runMigrationBtn');
+            btn.disabled = true;
+            btn.textContent = 'Migrating...';
+            
+            try {
+                const response = await TokenManager.apiCall(`${API_BASE_URL}/v1/admin/migration/run`, {
+                    method: 'POST'
+                });
+                
+                if (response && response.ok) {
+                    const data = await response.json();
+                    showMessage(`Migration completed! ${data.users_migrated || 0} accounts migrated.`, 'success');
+                    document.getElementById('migrationStatusValue').textContent = 'Completed';
+                    
+                    // Suggest re-login
+                    setTimeout(() => {
+                        if (confirm('Migration complete! Please sign out and sign back in to use the new features.')) {
+                            TokenManager.logout();
+                        }
+                    }, 1000);
+                } else {
+                    const data = await response?.json() || {};
+                    showMessage(data.error?.message || 'Migration failed', 'error');
+                }
+            } catch (error) {
+                console.error('Migration error:', error);
+                showMessage('Migration failed: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Run Migration';
+            }
+        }
+        
+        async function checkMigrationStatus() {
+            try {
+                const response = await TokenManager.apiCall(`${API_BASE_URL}/v1/admin/migration/status`);
+                
+                if (response && response.ok) {
+                    const data = await response.json();
+                    document.getElementById('migrationStatusValue').textContent = 
+                        data.migrated ? `Completed (${data.users_count || 0} users, ${data.businesses_count || 0} businesses)` : 'Not migrated';
+                } else {
+                    document.getElementById('migrationStatusValue').textContent = 'Unable to check status';
+                }
+            } catch (error) {
+                console.error('Status check error:', error);
+                document.getElementById('migrationStatusValue').textContent = 'Error checking status';
+            }
         }
     </script>
     <!-- Cloudflare Web Analytics -->

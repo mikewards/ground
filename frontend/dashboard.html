@@ -92,6 +92,15 @@
                     </svg>
                     Applications
                 </a>
+                <a href="dashboard-team.html" class="secondary-nav-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    Team
+                </a>
                 <a href="dashboard-webhooks.html" class="secondary-nav-link">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -249,12 +258,24 @@
                     <div class="app-keys-section">
                         <div class="keys-header">
                             <h4>API Keys</h4>
-                            <button class="btn-primary btn-small" onclick="openCreateTokenModal()">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                                </svg>
-                                Create Key
-                            </button>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn-secondary btn-small" onclick="openShareModal()" id="shareAppBtn" style="display: none;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="18" cy="5" r="3"/>
+                                        <circle cx="6" cy="12" r="3"/>
+                                        <circle cx="18" cy="19" r="3"/>
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                    </svg>
+                                    Share
+                                </button>
+                                <button class="btn-primary btn-small" onclick="openCreateTokenModal()">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                    Create Key
+                                </button>
+                            </div>
                         </div>
                         <div class="tokens-list" id="appTokensList">
                             <div class="loading-spinner">Loading keys...</div>
@@ -343,6 +364,50 @@
         </div>
     </div>
 
+    <!-- Share Application Modal -->
+    <div class="modal" id="shareAppModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Share Application</h3>
+                <button class="modal-close" onclick="closeModal('shareAppModal')">&times;</button>
+            </div>
+            <form id="shareAppForm">
+                <div class="form-group">
+                    <label for="shareEmail">Email Address</label>
+                    <input type="email" id="shareEmail" required placeholder="colleague@example.com">
+                    <small>Grant access to this application to another user.</small>
+                </div>
+                <div class="form-group">
+                    <label for="sharePermission">Permission Level</label>
+                    <select id="sharePermission" required>
+                        <option value="read">Read - View application and API usage</option>
+                        <option value="write">Write - Create/edit API keys</option>
+                        <option value="admin">Admin - Full control including deletion</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="shareReason">Reason (optional)</label>
+                    <input type="text" id="shareReason" placeholder="Why are you sharing this?">
+                    <small>This will be recorded for audit purposes.</small>
+                </div>
+                
+                <!-- Current Access List -->
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+                    <h4 style="font-size: 14px; margin: 0 0 12px 0;">Current Access</h4>
+                    <div id="currentAccessList" style="max-height: 150px; overflow-y: auto;">
+                        <div style="color: var(--text-secondary); font-size: 13px;">Loading...</div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeModal('shareAppModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">Grant Access</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // API_BASE_URL is set by config.js (loaded in head)
         let currentAppId = null;
@@ -369,11 +434,20 @@
         })();
         
         function initializeDashboard() {
-            const username = localStorage.getItem('tbd_username');
+            const username = localStorage.getItem('tbd_user_name') || localStorage.getItem('tbd_username');
             document.getElementById('userInfo').textContent = username || 'Account';
+            
+            // Show share button for RCAC users
+            const authMode = localStorage.getItem('tbd_auth_mode');
+            if (authMode === 'rcac') {
+                document.getElementById('shareAppBtn').style.display = 'inline-flex';
+            }
             
             // Load initial data
             loadApplications();
+            
+            // Setup share form
+            document.getElementById('shareAppForm').addEventListener('submit', handleShareApp);
         }
         
         // Helper function to handle API calls with automatic token refresh
@@ -640,6 +714,108 @@
         
         function openCreateTokenModal() {
             openModal('createTokenModal');
+        }
+        
+        function openShareModal() {
+            openModal('shareAppModal');
+            loadCurrentAccess();
+        }
+        
+        async function loadCurrentAccess() {
+            const listEl = document.getElementById('currentAccessList');
+            
+            try {
+                const response = await handleApiCall(`${API_BASE_URL}/v1/resources/application/${currentAppId}/access`);
+                
+                if (!response) {
+                    listEl.innerHTML = '<div style="color: var(--text-secondary); font-size: 13px;">Unable to load access list</div>';
+                    return;
+                }
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const grants = data.grants || [];
+                    
+                    if (grants.length === 0) {
+                        listEl.innerHTML = '<div style="color: var(--text-secondary); font-size: 13px;">Only you have access to this application.</div>';
+                    } else {
+                        listEl.innerHTML = grants.map(g => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                                <div>
+                                    <span style="font-size: 13px; font-weight: 500;">${g.user_email || g.role_name || 'Unknown'}</span>
+                                    <span style="font-size: 12px; color: var(--text-secondary); margin-left: 8px;">${g.permission}</span>
+                                </div>
+                                <button class="btn-small btn-danger" onclick="revokeAccess('${g.id}')" style="font-size: 11px; padding: 4px 8px;">Revoke</button>
+                            </div>
+                        `).join('');
+                    }
+                } else {
+                    listEl.innerHTML = '<div style="color: var(--text-secondary); font-size: 13px;">Unable to load access list</div>';
+                }
+            } catch (error) {
+                console.error('Error loading access:', error);
+                listEl.innerHTML = '<div style="color: var(--text-secondary); font-size: 13px;">Error loading access</div>';
+            }
+        }
+        
+        async function handleShareApp(e) {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Granting...';
+            
+            const body = {
+                grants: [{
+                    email: document.getElementById('shareEmail').value,
+                    permission: document.getElementById('sharePermission').value,
+                    reason: document.getElementById('shareReason').value || undefined
+                }]
+            };
+            
+            try {
+                const response = await handleApiCall(`${API_BASE_URL}/v1/resources/application/${currentAppId}/access`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                
+                if (!response) return;
+                
+                if (response.ok) {
+                    e.target.reset();
+                    loadCurrentAccess();
+                    alert('Access granted successfully!');
+                } else {
+                    const data = await response.json();
+                    alert(data.error?.message || 'Failed to grant access');
+                }
+            } catch (error) {
+                console.error('Error sharing app:', error);
+                alert('Failed to grant access');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Grant Access';
+            }
+        }
+        
+        async function revokeAccess(grantId) {
+            if (!confirm('Revoke this access?')) return;
+            
+            try {
+                const response = await handleApiCall(`${API_BASE_URL}/v1/resources/application/${currentAppId}/access/${grantId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response && response.ok) {
+                    loadCurrentAccess();
+                } else {
+                    alert('Failed to revoke access');
+                }
+            } catch (error) {
+                console.error('Error revoking access:', error);
+                alert('Failed to revoke access');
+            }
         }
         
         async function revokeAppToken(tokenId) {
