@@ -11,7 +11,9 @@ export default {
       '/signin': '/signin.html',
       '/account': '/account.html',
       '/dashboard': '/dashboard.html',
+      '/dashboard-team': '/dashboard-team.html',
       '/dashboard-webhooks': '/dashboard-webhooks.html',
+      '/dashboard-logs': '/dashboard-logs.html',
       '/dashboard-settings': '/dashboard-settings.html'
     };
     

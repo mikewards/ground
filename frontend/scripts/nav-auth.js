@@ -34,6 +34,42 @@
         if (navUsername) {
             navUsername.textContent = displayName;
         }
+        
+        // Add business selector if RCAC and multiple businesses
+        if (authMode === 'rcac' && dropdown) {
+            const businesses = JSON.parse(localStorage.getItem('tbd_businesses') || '[]');
+            if (businesses.length > 1) {
+                const currentBusinessId = localStorage.getItem('tbd_current_business_id');
+                
+                // Add business selector to dropdown
+                const businessSelector = document.createElement('div');
+                businessSelector.className = 'dropdown-business-selector';
+                businessSelector.innerHTML = `
+                    <div style="padding: 8px 12px; font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600;">Switch Business</div>
+                    ${businesses.map(b => `
+                        <button class="dropdown-item${b.id === currentBusinessId ? ' active' : ''}" data-business-id="${b.id}" data-business-name="${b.name}">
+                            <span style="width: 8px; height: 8px; border-radius: 2px; background: ${b.id === currentBusinessId ? '#6366f1' : '#e2e8f0'}; margin-right: 8px;"></span>
+                            ${b.name}
+                        </button>
+                    `).join('')}
+                    <div style="border-top: 1px solid #e2e8f0; margin: 4px 0;"></div>
+                `;
+                
+                // Insert at the beginning of dropdown
+                dropdown.insertBefore(businessSelector, dropdown.firstChild);
+                
+                // Add click handlers for business switching
+                businessSelector.querySelectorAll('button').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const businessId = this.dataset.businessId;
+                        const businessName = this.dataset.businessName;
+                        localStorage.setItem('tbd_current_business_id', businessId);
+                        localStorage.setItem('tbd_current_business_name', businessName);
+                        window.location.reload();
+                    });
+                });
+            }
+        }
     }
     
     // Dropdown toggle
