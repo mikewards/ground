@@ -333,7 +333,7 @@ private fun isValidEmail(email: String): Boolean {
 // EXTENSION FUNCTIONS FOR RESPONSE MAPPING
 // ═══════════════════════════════════════════════════════════════
 
-private fun com.ground.service.UserResponse.toUserResponse() = UserResponse(
+private fun com.ground.service.UserResponse.toUserResponse() = com.ground.dto.UserResponse(
     id = this.id.toString(),
     email = this.email,
     first_name = this.firstName,

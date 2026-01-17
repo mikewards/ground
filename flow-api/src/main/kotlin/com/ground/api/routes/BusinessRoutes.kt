@@ -460,7 +460,7 @@ fun Application.businessRoutes() {
 // EXTENSION FUNCTIONS FOR RESPONSE MAPPING
 // ═══════════════════════════════════════════════════════════════
 
-private fun com.ground.service.BusinessResponse.toBusinessResponse() = BusinessResponse(
+private fun com.ground.service.BusinessResponse.toBusinessResponse() = com.ground.dto.BusinessResponse(
     id = this.id.toString(),
     name = this.name,
     slug = this.slug,
