@@ -8,7 +8,16 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.serialization.Serializable
 import java.util.*
+
+/**
+ * Response DTOs for business endpoints
+ */
+@Serializable
+data class BusinessListResponse(
+    val businesses: List<BusinessWithRolesResponse>
+)
 
 /**
  * Business management routes for RCAC.
@@ -34,7 +43,9 @@ fun Application.businessRoutes() {
                     val userId = call.getCurrentUserId() ?: return@get call.respondUnauthorized()
                     
                     val businesses = businessService.listUserBusinesses(userId)
-                    call.respond(businesses.map { it.toBusinessWithRolesResponse() })
+                    call.respond(BusinessListResponse(
+                        businesses = businesses.map { it.toBusinessWithRolesResponse() }
+                    ))
                 }
                 
                 /**
@@ -359,7 +370,7 @@ fun Application.businessRoutes() {
                             ipAddress = ipAddress
                         )
                         
-                        call.respond(HttpStatusCode.Created, mapOf("message" to "Role assigned"))
+                        call.respond(HttpStatusCode.Created, SimpleMessageResponse("Role assigned"))
                     } catch (e: IllegalArgumentException) {
                         call.respond(
                             HttpStatusCode.BadRequest,
@@ -443,7 +454,7 @@ fun Application.businessRoutes() {
                             ipAddress = ipAddress
                         )
                         
-                        call.respond(mapOf("message" to "Invitation declined"))
+                        call.respond(SimpleMessageResponse("Invitation declined"))
                     } catch (e: IllegalArgumentException) {
                         call.respond(
                             HttpStatusCode.BadRequest,
