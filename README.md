@@ -1,14 +1,12 @@
 # Ground Platform
 
-> A working reference implementation of a complete developer API platform — every layer a developer-facing business needs, built end to end: OAuth 2.0, webhooks, rate limiting, SDKs, request logging, and a developer dashboard.
+> A unified DeFi API platform that abstracts protocol complexity and enables developers to integrate cryptocurrency yield generation into their applications.
 
-**What this is:** a demonstrative build, not a commercial product. The domain is DeFi yield (a unified REST API wrapping Morpho and Aave), but the point is the platform craft around it — the same architecture I ran at Square scale: API design and versioning, AuthN/Z with short-lived tokens, Svix-powered event delivery, per-endpoint rate limits, sandbox semantics, and self-serve developer onboarding. No real funds move.
-
-**Live sandbox:** the API gateway runs at `flow-platform-production.up.railway.app` (`/health`, `/v1/*`) with Stripe-style structured errors.
+[![Deploy](https://railway.app/button.svg)](https://railway.app)
 
 ## Overview
 
-Ground provides a single REST API that wraps multiple DeFi protocols (Morpho and Aave), enabling developers to integrate yield without managing protocol-specific integrations, smart contracts, or compliance requirements.
+Ground provides a single, beautiful REST API that wraps multiple DeFi protocols (Morpho and Aave), enabling developers to earn yield without managing protocol-specific integrations, smart contracts, or compliance requirements.
 
 **Key Features:**
 - **Unified API** - Single interface for multiple DeFi protocols
@@ -31,8 +29,8 @@ Ground provides a single REST API that wraps multiple DeFi protocols (Morpho and
 
 ```bash
 # Clone repository
-git clone https://github.com/wardmic4/flow-platform.git
-cd flow-platform
+git clone https://github.com/mikewards/ground.git
+cd ground
 
 # Set up database
 createdb flow_api
@@ -206,7 +204,7 @@ cd flow-api
 
 ## Contributing
 
-This is a private project. For questions or contributions:
+This is a personal reference/portfolio project. For questions:
 
 1. Check the [documentation](./docs/)
 2. Review [API documentation](./docs/api/specification.md)
