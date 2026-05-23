@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ground - DeFi Platform for Developers</title>
+    <title>DeFi yield API — developer platform prototype</title>
     <!-- Deploy v2.2 - Account Settings dropdown, centered whale favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="styles/styles.css">
@@ -86,16 +86,16 @@
             <div class="hero-content">
                 <div class="hero-badge">
                     <span class="badge-dot"></span>
-                    <span>US-Based • Fully Compliant • Enterprise Ready</span>
+                    <span>Prototype · not a live product · no real funds move</span>
                 </div>
                 <h1 class="hero-title">
-                    DeFi APIs for developers.<br/>
-                    <span class="gradient-text">Yield$</span> built in.
+                    A DeFi yield API,<br/>
+                    explored <span class="gradient-text">end to end</span>.
                 </h1>
                 <p class="hero-description">
-                    Ground provides APIs, SDKs, and developer tools that let you integrate DeFi yield generation 
-                    into your stack. Your customers' crypto doesn't just sit idle—it earns. We handle compliance, regulation, and foreign exchange complexity—you 
-                    focus on building.
+                    A self-built prototype exploring what a developer platform for DeFi yield could look and 
+                    feel like — OAuth 2.0, webhooks, SDKs, a dashboard, and docs, end to end. It's a 
+                    design-and-engineering exercise, not a live service: no real funds move.
                 </p>
                 <div class="hero-cta">
                     <a href="account.html" class="btn-split btn-primary btn-large" id="startBuildingBtn">
@@ -155,16 +155,16 @@
                 </div>
                 <div class="hero-stats">
                     <div class="stat">
-                        <div class="stat-value">6%</div>
-                        <div class="stat-label">Average Yield</div>
+                        <div class="stat-value">OAuth 2.0</div>
+                        <div class="stat-label">Token auth</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-value">99.9%</div>
-                        <div class="stat-label">Uptime SLA</div>
+                        <div class="stat-value">Webhooks</div>
+                        <div class="stat-label">Signed events</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-value">&lt;100ms</div>
-                        <div class="stat-label">API Response</div>
+                        <div class="stat-value">6+ SDKs</div>
+                        <div class="stat-label">Code samples</div>
                     </div>
                 </div>
             </div>
@@ -246,9 +246,9 @@
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         </svg>
                     </div>
-                    <h3>Compliance Built-In</h3>
-                    <p>US-based company handling all regulatory requirements, KYC/AML, and foreign exchange compliance. Focus on building, not paperwork.</p>
-                    <a href="#" class="feature-link">Learn about compliance <span class="signal-ground-icon"><svg width="14" height="18" viewBox="0 0 30 37.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="miter"><path d="M 15,24.5 L 15,4.5"/><path d="M 3.5,25 L 15.068807,34 L 26.995413,25 L 3.5,25 z"/></svg></span></a>
+                    <h3>OAuth 2.0 Token Auth</h3>
+                    <p>The prototype models bearer-token authentication, scoped API keys, and per-key rate limiting — the platform plumbing a real integration would lean on.</p>
+                    <a href="api-reference.html" class="feature-link">View API Reference <span class="signal-ground-icon"><svg width="14" height="18" viewBox="0 0 30 37.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="miter"><path d="M 15,24.5 L 15,4.5"/><path d="M 3.5,25 L 15.068807,34 L 26.995413,25 L 3.5,25 z"/></svg></span></a>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -256,9 +256,9 @@
                             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                         </svg>
                     </div>
-                    <h3>Guaranteed 6% Yield</h3>
-                    <p>Consistent 6% annual yield across supported cryptocurrencies. We manage DeFi protocol complexity and foreign exchange relationships behind the scenes.</p>
-                    <a href="#" class="feature-link">View yield details <span class="signal-ground-icon"><svg width="14" height="18" viewBox="0 0 30 37.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="miter"><path d="M 15,24.5 L 15,4.5"/><path d="M 3.5,25 L 15.068807,34 L 26.995413,25 L 3.5,25 z"/></svg></span></a>
+                    <h3>Yield Accounts API</h3>
+                    <p>A modeled endpoint for creating yield-bearing accounts and tracking accruals, designed to show how such an API surface could be shaped. Illustrative only — no funds are managed.</p>
+                    <a href="api-reference.html" class="feature-link">View API Reference <span class="signal-ground-icon"><svg width="14" height="18" viewBox="0 0 30 37.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="miter"><path d="M 15,24.5 L 15,4.5"/><path d="M 3.5,25 L 15.068807,34 L 26.995413,25 L 3.5,25 z"/></svg></span></a>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -317,7 +317,7 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="20 6 9 17 4 12"/>
                             </svg>
-                            <span>24/7 developer support</span>
+                            <span>Webhook signing and request logging</span>
                         </div>
                     </div>
                     <div class="integration-cta">
@@ -386,8 +386,8 @@ puts account.id
     <section class="security">
         <div class="container">
             <div class="security-content">
-                <h2>Enterprise-grade security,<br/>without the complexity</h2>
-                <p>Ground is a US-based company that handles all regulatory requirements, foreign exchange relationships, and DeFi protocol complexity. Your users get secure, compliant yield generation—you get peace of mind.</p>
+                <h2>The platform craft,<br/>built end to end</h2>
+                <p>This prototype focuses on the engineering of a developer platform: how authentication, event delivery, logging, and rate limiting could fit together. It is a proof of concept, not a live financial service — no real funds move and there are no compliance or certification claims.</p>
                 <div class="security-grid">
                     <div class="security-item">
                         <div class="security-icon">
@@ -395,8 +395,8 @@ puts account.id
                                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                             </svg>
                         </div>
-                        <h4>Bank-Level Security</h4>
-                        <p>256-bit encryption, SOC 2 Type II certified, and regular security audits</p>
+                        <h4>OAuth 2.0 Token Auth</h4>
+                        <p>Bearer-token authentication and scoped API keys, modeled end to end</p>
                     </div>
                     <div class="security-item">
                         <div class="security-icon">
@@ -405,8 +405,8 @@ puts account.id
                                 <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
                             </svg>
                         </div>
-                        <h4>Full Regulatory Compliance</h4>
-                        <p>KYC/AML, FinCEN registration, and compliance with all US financial regulations</p>
+                        <h4>Signed Webhooks</h4>
+                        <p>Webhook event delivery with request signing so payloads can be verified</p>
                     </div>
                     <div class="security-item">
                         <div class="security-icon">
@@ -415,8 +415,8 @@ puts account.id
                                 <path d="M12 6v6l4 2"/>
                             </svg>
                         </div>
-                        <h4>Global Exchange Network</h4>
-                        <p>We manage relationships with foreign DeFi exchanges and protocols</p>
+                        <h4>Rate Limiting</h4>
+                        <p>Per-key rate limiting to show how request throughput could be managed</p>
                     </div>
                     <div class="security-item">
                         <div class="security-icon">
@@ -426,8 +426,8 @@ puts account.id
                                 <line x1="6" y1="20" x2="6" y2="14"/>
                             </svg>
                         </div>
-                        <h4>Transparent Reporting</h4>
-                        <p>Real-time yield tracking, detailed transaction logs, and audit trails</p>
+                        <h4>Request Logging</h4>
+                        <p>A dashboard view of API request logs to demonstrate observability</p>
                     </div>
                 </div>
             </div>
@@ -438,8 +438,8 @@ puts account.id
     <section class="cta">
         <div class="container">
             <div class="cta-content">
-                <h2>Ready to start building?</h2>
-                <p>Join thousands of developers using Ground to integrate DeFi yield generation into their applications.</p>
+                <h2>Explore the prototype</h2>
+                <p>Browse the API reference, SDK samples, and dashboard to see how this developer platform for DeFi yield was put together.</p>
                 <div class="cta-buttons">
                     <a href="account.html" class="btn-split btn-primary btn-large">
                         <span class="btn-text">Create Account</span>
@@ -472,7 +472,7 @@ puts account.id
                         </g>
                     </svg>
                     </div>
-                    <p class="footer-tagline">DeFi APIs for developers</p>
+                    <p class="footer-tagline">A developer-platform prototype</p>
                 </div>
                 <div class="footer-section">
                     <h4>Product</h4>
@@ -498,7 +498,7 @@ puts account.id
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Ground. All rights reserved.</p>
+                <p>A developer-platform prototype by Mike Ward · github.com/mikewards/ground</p>
             </div>
         </div>
     </footer>
