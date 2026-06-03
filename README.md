@@ -1,21 +1,21 @@
-# Ground Platform
+# Ground — a developer-platform prototype
 
-> A unified DeFi API platform that abstracts protocol complexity and enables developers to integrate cryptocurrency yield generation into their applications.
+> A self-built prototype exploring what a complete developer API platform could look and feel like — OAuth 2.0, webhooks, SDKs, rate limiting, request logging, and a developer dashboard, end to end.
 
 [![Deploy](https://railway.app/button.svg)](https://railway.app)
 
 ## Overview
 
-Ground provides a single, beautiful REST API that wraps multiple DeFi protocols (Morpho and Aave), enabling developers to earn yield without managing protocol-specific integrations, smart contracts, or compliance requirements.
+Ground is a demonstrative proof of concept: the Square developer-platform playbook — public APIs, SDKs, OAuth, webhooks, a dashboard, and docs — rebuilt solo as a design-and-engineering exercise. The example domain is a DeFi-yield API that wraps protocols like Morpho and Aave, but Ground is **not a live product, not a company, and no real funds move**. The point is the platform craft: how authentication, event delivery, rate limiting, logging, SDK ergonomics, and developer docs fit together into something that feels good to build on.
 
-**Key Features:**
-- **Unified API** - Single interface for multiple DeFi protocols
+**What it demonstrates:**
+- **Unified API** - A single, consistent REST interface over the example domain
 - **OAuth 2.0 Authentication** - Short-lived access tokens with automatic refresh
-- **Real-time Webhooks** - Svix-powered event delivery with retries
+- **Real-time Webhooks** - Svix-powered event delivery with retries and signature verification
 - **Rate Limiting** - Configurable per-endpoint limits
-- **Real-time Rates** - Current APY from Morpho and Aave
 - **Developer Dashboard** - Application, API key, and webhook management
 - **Request Logging** - 7-day API request/response logging
+- **Multi-language SDKs** - Generated client libraries with code samples
 
 ## Quick Start
 
