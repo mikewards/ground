@@ -1,12 +1,14 @@
 # Ground Platform
 
-> A unified DeFi API platform that abstracts protocol complexity and enables developers to integrate cryptocurrency yield generation into their applications.
+> A working reference implementation of a complete developer API platform — every layer a developer-facing business needs, built end to end: OAuth 2.0, webhooks, rate limiting, SDKs, request logging, and a developer dashboard.
 
-[![Deploy](https://railway.app/button.svg)](https://railway.app)
+**What this is:** a demonstrative build, not a commercial product. The domain is DeFi yield (a unified REST API wrapping Morpho and Aave), but the point is the platform craft around it — the same architecture I ran at Square scale: API design and versioning, AuthN/Z with short-lived tokens, Svix-powered event delivery, per-endpoint rate limits, sandbox semantics, and self-serve developer onboarding. No real funds move.
+
+**Live sandbox:** the API gateway runs at `flow-platform-production.up.railway.app` (`/health`, `/v1/*`) with Stripe-style structured errors.
 
 ## Overview
 
-Ground provides a single, beautiful REST API that wraps multiple DeFi protocols (Morpho and Aave), enabling developers to earn yield without managing protocol-specific integrations, smart contracts, or compliance requirements.
+Ground provides a single REST API that wraps multiple DeFi protocols (Morpho and Aave), enabling developers to integrate yield without managing protocol-specific integrations, smart contracts, or compliance requirements.
 
 **Key Features:**
 - **Unified API** - Single interface for multiple DeFi protocols
@@ -29,7 +31,7 @@ Ground provides a single, beautiful REST API that wraps multiple DeFi protocols 
 
 ```bash
 # Clone repository
-git clone https://github.com/wardmic4/flow-platform.git
+git clone https://github.com/mikewards/flow-platform.git
 cd flow-platform
 
 # Set up database

@@ -47,7 +47,7 @@ sudo apt install -y nodejs
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/wardmic4/flow-platform.git
+git clone https://github.com/mikewards/flow-platform.git
 cd flow-platform
 ```
 
