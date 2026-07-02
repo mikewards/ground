@@ -231,7 +231,7 @@ class UserService(
      * Authenticate user with email and password.
      * Handles account lockout after failed attempts.
      * 
-     * Also supports login by username (for migrated accounts where email might be username@migrated.ground.dev)
+     * Also supports login by username (for migrated accounts with a placeholder migrated email)
      */
     fun authenticate(
         email: String,
@@ -246,10 +246,14 @@ class UserService(
             var user = Users.select { Users.email eq normalizedInput }.firstOrNull()
             
             // If not found and input doesn't look like an email, try as username
-            // (for migrated accounts where email is username@migrated.ground.dev)
+            // (for migrated accounts with a placeholder migrated email; check the
+            // legacy placeholder domain too so previously migrated rows keep working)
             if (user == null && !normalizedInput.contains("@")) {
-                val migratedEmail = "$normalizedInput@migrated.ground.dev"
-                user = Users.select { Users.email eq migratedEmail }.firstOrNull()
+                val migratedEmails = listOf(
+                    "$normalizedInput@migrated.local",
+                    "$normalizedInput@migrated.ground.dev"
+                )
+                user = Users.select { Users.email inList migratedEmails }.firstOrNull()
             }
             
             // Also try matching by firstName (case-insensitive, set to username during migration)

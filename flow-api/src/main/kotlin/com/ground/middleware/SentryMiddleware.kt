@@ -36,10 +36,10 @@ fun Application.sentry() {
             options.profilesSampleRate = if (env == "production") 0.1 else 0.5
             
             options.isDebug = false
-            options.setTag("service", "ground-api")
+            options.setTag("service", "yield-api")
             
             // Set release version for tracking deployments
-            options.release = "ground-api@1.0.0"
+            options.release = "yield-api@1.0.0"
             
             // Enable sending of default PII (be careful in production)
             options.isSendDefaultPii = false

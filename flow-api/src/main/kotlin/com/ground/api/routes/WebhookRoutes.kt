@@ -259,7 +259,7 @@ fun Application.webhookRoutes() {
                         payload = mapOf(
                             "test" to true,
                             "event_type" to request.eventType,
-                            "message" to "This is a test webhook event from Ground",
+                            "message" to "This is a test webhook event from the Yield API platform",
                             "timestamp" to System.currentTimeMillis()
                         )
                     )

@@ -786,14 +786,14 @@ select option {
 }
 
 /* Signal Ground Icon for Links */
-.signal-ground-icon {
+.signal-arrow-icon {
     display: inline-flex;
     align-items: center;
     margin-left: 4px;
     vertical-align: middle;
 }
 
-.signal-ground-icon svg {
+.signal-arrow-icon svg {
     transition: transform 0.2s ease;
     transform: rotate(-90deg) translateZ(0);
     will-change: transform;
@@ -802,9 +802,9 @@ select option {
     flex-shrink: 0;
 }
 
-.feature-link:hover .signal-ground-icon svg,
-.btn-link:hover .signal-ground-icon svg,
-.qs-link-card:hover .signal-ground-icon svg {
+.feature-link:hover .signal-arrow-icon svg,
+.btn-link:hover .signal-arrow-icon svg,
+.qs-link-card:hover .signal-arrow-icon svg {
     transform: rotate(0deg) translateZ(0);
 }
 

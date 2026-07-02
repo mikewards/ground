@@ -29,9 +29,9 @@
     function updateAllUrls(env) {
         const apiUrl = API_URLS[env];
         const oldUrls = [
-            'https://api.ground.com',
+            'https://api.example.com',
             'https://api.flow.com',
-            'https://api-sandbox.ground.com',
+            'https://api-sandbox.example.com',
             'https://flow-platform-staging.up.railway.app',
             'https://flow-platform-flow-platform-staging.up.railway.app',
             'https://flow-platform-production.up.railway.app'

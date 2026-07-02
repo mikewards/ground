@@ -1,8 +1,8 @@
 # Custom Domain Setup Guide
 
-This guide will help you set up custom domains for your Ground API:
-- **Production**: `api.ground.com`
-- **Sandbox**: `api-sandbox.ground.com`
+This guide will help you set up custom domains for your Yield API:
+- **Production**: `api.example.com`
+- **Sandbox**: `api-sandbox.example.com`
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ This guide will help you set up custom domains for your Ground API:
 4. Go to **Settings** tab
 5. Scroll to **Networking** section
 6. Click **"Custom Domain"** or **"Add Domain"**
-7. Enter: `api.ground.com`
+7. Enter: `api.example.com`
 8. Railway will show you DNS records to add (see Step 2)
 
 ### For Sandbox Service
@@ -30,7 +30,7 @@ This guide will help you set up custom domains for your Ground API:
 3. Go to **Settings** tab
 4. Scroll to **Networking** section
 5. Click **"Custom Domain"** or **"Add Domain"**
-6. Enter: `api-sandbox.ground.com`
+6. Enter: `api-sandbox.example.com`
 7. Railway will show you DNS records to add
 
 ## Step 2: Configure DNS Records
@@ -127,8 +127,8 @@ The process is similar:
 DNS changes can take anywhere from a few minutes to 48 hours to propagate:
 
 1. **Check propagation status**: Use https://dnschecker.org
-   - Search for: `api.ground.com`
-   - Search for: `api-sandbox.ground.com`
+   - Search for: `api.example.com`
+   - Search for: `api-sandbox.example.com`
    - Wait until all locations show the Railway IP/domain
 
 2. **Verify in Railway**: 
@@ -151,7 +151,7 @@ Railway automatically provisions SSL certificates via Let's Encrypt:
 
 ```bash
 # Health check
-curl https://api.ground.com/health
+curl https://api.example.com/health
 
 # Should return:
 # {"status":"healthy","timestamp":"...","version":"1.0.0"}
@@ -161,7 +161,7 @@ curl https://api.ground.com/health
 
 ```bash
 # Health check
-curl https://api-sandbox.ground.com/health
+curl https://api-sandbox.example.com/health
 
 # Should return:
 # {"status":"healthy","timestamp":"...","version":"1.0.0"}
@@ -171,8 +171,8 @@ curl https://api-sandbox.ground.com/health
 
 1. The frontend `config.js` is already configured with these domains
 2. No changes needed - it will automatically use:
-   - `https://api.ground.com` for production
-   - `https://api-sandbox.ground.com` for sandbox
+   - `https://api.example.com` for production
+   - `https://api-sandbox.example.com` for sandbox
 
 ## Step 7: Update Any Remaining References
 
@@ -213,25 +213,25 @@ If you have any hardcoded Railway URLs elsewhere:
 
 ## Verification Checklist
 
-- [ ] DNS records added for `api.ground.com`
-- [ ] DNS records added for `api-sandbox.ground.com`
+- [ ] DNS records added for `api.example.com`
+- [ ] DNS records added for `api-sandbox.example.com`
 - [ ] DNS propagation verified (dnschecker.org)
 - [ ] Railway shows domains as "Active" or "Verified"
 - [ ] SSL certificates issued (check Railway dashboard)
-- [ ] `curl https://api.ground.com/health` returns 200
-- [ ] `curl https://api-sandbox.ground.com/health` returns 200
+- [ ] `curl https://api.example.com/health` returns 200
+- [ ] `curl https://api-sandbox.example.com/health` returns 200
 - [ ] Frontend can connect to custom domains
 - [ ] Environment toggle works with custom domains
 
 ## Quick Reference
 
 ### Production
-- **Domain**: `api.ground.com`
+- **Domain**: `api.example.com`
 - **Railway Service**: `flow-platform-production`
 - **Branch**: `main`
 
 ### Sandbox
-- **Domain**: `api-sandbox.ground.com`
+- **Domain**: `api-sandbox.example.com`
 - **Railway Service**: `flow-platform-staging`
 - **Branch**: `staging`
 

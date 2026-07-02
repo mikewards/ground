@@ -1,0 +1,26 @@
+# Yield API Platform
+
+> Developer API for earning yield on cryptocurrency deposits, routed automatically across DeFi lending protocols (Morpho and Aave). Stripe-style REST API with sandbox and production environments. This is a reference implementation: no real funds move, and the sandbox settles against the Sepolia testnet.
+
+## Docs
+
+- [Quickstart](/quickstart): Make your first API call in minutes
+- [Getting started](/getting-started): Accounts, API keys, and environments
+- [Guides](/guides): Deposits, withdrawals, webhooks, and rate data walkthroughs
+- [API reference](/api-reference): Full endpoint catalog with request/response examples
+- [SDKs](/sdks): Client libraries and code samples
+- [Status](/status): Live service status
+
+## API
+
+- [OpenAPI 3.1 specification](/openapi.yaml): Machine-readable spec covering all documented endpoints
+- [GitHub repository](https://github.com/mikewards/yield-api-dev-platform): Source code for the API and docs
+
+## Key facts for agents
+
+- Base URLs: production `https://flow-platform-production.up.railway.app`, sandbox `https://flow-platform-flow-platform-staging.up.railway.app`
+- Auth: `Authorization: Bearer <token>` on all authenticated endpoints. Application API keys are prefixed `tbd_sand_` (sandbox) and `tbd_prod_` (production); legacy personal keys use `sk_live_`. Session auth issues 15-minute JWT access tokens with rotating refresh tokens (`POST /v1/auth/authenticate`, `POST /v1/auth/refresh`)
+- Errors: every error response uses a Stripe-style envelope `{ "error": { "code", "message", "type", "param" } }`
+- Rate limits: every response carries `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` headers; the default limit is 100 requests/minute (market and rate endpoints: 75/minute)
+- Sandbox semantics: no real funds move anywhere in this API; sandbox transactions settle against the Sepolia testnet
+- Request logs: available at `GET /v1/logs` with a 7-day retention window

@@ -1,4 +1,4 @@
-# Ground Platform
+# Yield API Platform
 
 > A working reference implementation of a complete developer API platform — every layer a developer-facing business needs, built end to end: OAuth 2.0, webhooks, rate limiting, SDKs, request logging, and a developer dashboard.
 
@@ -8,7 +8,7 @@
 
 ## Overview
 
-Ground provides a single REST API that wraps multiple DeFi protocols (Morpho and Aave), enabling developers to integrate yield without managing protocol-specific integrations, smart contracts, or compliance requirements.
+The platform provides a single REST API that wraps multiple DeFi protocols (Morpho and Aave), enabling developers to integrate yield without managing protocol-specific integrations, smart contracts, or compliance requirements.
 
 **Key Features:**
 - **Unified API** - Single interface for multiple DeFi protocols

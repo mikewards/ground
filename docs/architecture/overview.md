@@ -1,4 +1,4 @@
-# Ground Platform Architecture
+# Yield API Platform Architecture
 
 **Last Updated**: December 2025  
 **Status**: Active Development  

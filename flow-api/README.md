@@ -1,6 +1,6 @@
-# Ground API Gateway
+# Yield API Gateway
 
-Kotlin REST API gateway for the Ground DeFi platform, wrapping Morpho and Aave protocols.
+Kotlin REST API gateway for the DeFi yield platform, wrapping Morpho and Aave protocols.
 
 **Last Updated**: December 2025
 

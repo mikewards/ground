@@ -86,7 +86,7 @@ tasks.test {
 
 // Configure Shadow JAR (fat JAR with all dependencies)
 tasks.shadowJar {
-    archiveBaseName.set("ground-api")
+    archiveBaseName.set("yield-api")
     archiveClassifier.set("")
     archiveVersion.set("")
     

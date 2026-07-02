@@ -4,7 +4,7 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.javatime.timestamp
 
 /**
- * Users - Individual people who access the Ground platform.
+ * Users - Individual people who access the platform.
  * 
  * This replaces the conflated Account model where Account = User + Business.
  * Now: User = Person, Business = Organization (separate entities).

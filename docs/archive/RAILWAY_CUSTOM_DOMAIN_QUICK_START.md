@@ -17,7 +17,7 @@ Railway Dashboard
     → Settings
       → Networking
         → Custom Domain
-          → Enter: api.ground.com
+          → Enter: api.example.com
           → Copy DNS value shown
 ```
 
@@ -29,7 +29,7 @@ Railway Dashboard
     → Settings
       → Networking
         → Custom Domain
-          → Enter: api-sandbox.ground.com
+          → Enter: api-sandbox.example.com
           → Copy DNS value shown
 ```
 
@@ -57,12 +57,12 @@ Proxy: OFF (important!)
 
 ```bash
 # Check DNS propagation
-dig api.ground.com
-dig api-sandbox.ground.com
+dig api.example.com
+dig api-sandbox.example.com
 
 # Test after 5-30 minutes
-curl https://api.ground.com/health
-curl https://api-sandbox.ground.com/health
+curl https://api.example.com/health
+curl https://api-sandbox.example.com/health
 ```
 
 ### 5. Verify in Railway

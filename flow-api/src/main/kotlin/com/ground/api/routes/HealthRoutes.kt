@@ -36,7 +36,7 @@ fun Application.healthRoutes() {
             call.respond(
                 HttpStatusCode.OK,
                 ApiInfoResponse(
-                    service = "Ground API Gateway",
+                    service = "Yield API Gateway",
                     status = "running",
                     version = "1.0.0",
                     endpoints = EndpointsInfo(

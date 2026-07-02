@@ -29,7 +29,7 @@ object DatabaseFactory {
         // Validate required fields
         requireNotNull(dbUrl) { 
             "❌ DATABASE_URL is missing! Railway should auto-set this when PostgreSQL service is linked. " +
-            "Go to ground-platform → Settings → Service Dependencies → Add ground-db service. " +
+            "Go to the API service → Settings → Service Dependencies → Add the Postgres service. " +
             "Railway will automatically set DATABASE_URL."
         }
         

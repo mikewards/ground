@@ -1,4 +1,4 @@
-# Ground API Specification
+# Yield API Specification
 
 **Last Updated**: December 2025  
 **API Version**: v1

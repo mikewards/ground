@@ -1,4 +1,4 @@
-# Ground Platform Documentation
+# Yield API Platform Documentation
 
 Welcome to the TBD platform documentation. This directory contains all technical documentation organized by topic.
 

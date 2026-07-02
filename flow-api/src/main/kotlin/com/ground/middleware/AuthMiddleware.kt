@@ -33,7 +33,7 @@ fun Application.auth() {
     
     install(Authentication) {
         bearer("bearer-auth") {
-            realm = "Ground API"
+            realm = "Yield API"
             authenticate { tokenCredential ->
                 try {
                     val tokenService = TokenService()

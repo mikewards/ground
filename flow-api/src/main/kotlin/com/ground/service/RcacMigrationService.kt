@@ -61,7 +61,7 @@ class RcacMigrationService(
                 try {
                     val accountId = account[Accounts.id].value
                     val username = account[Accounts.username]
-                    val email = account[Accounts.email] ?: "$username@migrated.ground.dev"
+                    val email = account[Accounts.email] ?: "$username@migrated.local"
                     val passwordHash = account[Accounts.passwordHash]
                     val status = account[Accounts.status]
                     val createdAt = account[Accounts.createdAt] ?: Instant.now()

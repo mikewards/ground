@@ -34,7 +34,7 @@ data class RefreshTokenResult(
  */
 class TokenService {
     private val config = ConfigFactory.load()
-    private val tokenPrefix = config.getString("ground.tokenPrefix")
+    private val tokenPrefix = config.getString("platform.tokenPrefix")
     private val jwtSecret = System.getenv("JWT_SECRET") ?: config.getString("jwt.secret")
     
     // HMAC key for hashing refresh tokens - MUST be set in production
@@ -100,8 +100,8 @@ class TokenService {
         
         val builder = Jwts.builder()
             .setSubject(accountId.toString())
-            .setIssuer("ground-api")
-            .setAudience("ground-api")
+            .setIssuer("yield-api")
+            .setAudience("yield-api")
             .setExpiration(Date(System.currentTimeMillis() + ACCESS_TOKEN_LIFETIME_MS))
         
         // Embed session ID in JWT if provided (for "current session" detection)

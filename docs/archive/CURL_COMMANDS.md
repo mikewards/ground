@@ -1,4 +1,4 @@
-# Ground API cURL Commands
+# Yield API cURL Commands
 
 ## Markets Endpoint
 

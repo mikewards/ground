@@ -1,0 +1,2365 @@
+openapi: 3.1.0
+info:
+  title: Yield API Platform
+  version: 1.0.0
+  description: |
+    The Yield API Platform is a developer API for earning yield on cryptocurrency
+    deposits, routed automatically across DeFi lending protocols (Morpho and Aave).
+
+    This is a **reference implementation**: no real funds move through this API.
+    The sandbox environment settles against the Sepolia testnet, and production
+    behaviour is simulated end-to-end.
+
+    All error responses use a Stripe-style envelope:
+    `{ "error": { "code", "message", "type", "param" } }`.
+
+    Every response includes rate-limit headers
+    (`X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`).
+    Request logs are retained for 7 days.
+  license:
+    name: MIT
+    identifier: MIT
+  contact:
+    name: Yield API Platform
+    url: https://github.com/mikewards/yield-api-dev-platform
+servers:
+  - url: https://flow-platform-production.up.railway.app
+    description: Production
+  - url: https://flow-platform-flow-platform-staging.up.railway.app
+    description: Sandbox (testnet / Sepolia — no real funds move)
+security:
+  - bearerAuth: []
+tags:
+  - name: Platform
+    description: Service health and metadata.
+  - name: Accounts
+    description: Developer account creation and retrieval.
+  - name: Auth
+    description: Session authentication with short-lived access tokens and refresh rotation.
+  - name: Access Tokens
+    description: Personal Access Tokens for API authentication.
+  - name: Applications
+    description: Applications, their API keys, and wallets.
+  - name: Yield
+    description: Yield accounts, deposits, withdrawals, rates, and positions.
+  - name: Markets
+    description: Available DeFi markets and current APYs.
+  - name: Webhooks
+    description: Webhook endpoints and event types.
+  - name: Logs
+    description: API request logs (7-day retention).
+  - name: Users
+    description: User registration and profiles (RCAC surface).
+  - name: Businesses
+    description: Business workspaces and membership (RCAC surface).
+  - name: Resource Access
+    description: Fine-grained resource access grants (RCAC surface).
+
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      tags: [Platform]
+      summary: Health check
+      description: Returns service health. Rate limited at 300 requests per minute.
+      security: []
+      responses:
+        "200":
+          description: Service is healthy.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "429":
+          description: Rate limit exceeded (300 requests per minute).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/accounts:
+    post:
+      operationId: createAccount
+      tags: [Accounts]
+      summary: Create account
+      description: >
+        Create a new developer account. After account creation, authenticate to
+        receive tokens and generate Personal Access Tokens for API authentication.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAccountRequest"
+      responses:
+        "201":
+          description: Account created.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /v1/auth/authenticate:
+    post:
+      operationId: authenticate
+      tags: [Auth]
+      summary: Authenticate
+      description: >
+        Exchange a username and password for a short-lived access token
+        (15 minutes) and a refresh token. Refresh tokens rotate on every use.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthenticateRequest"
+      responses:
+        "200":
+          description: Authenticated.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthenticateResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          description: Account locked after too many failed attempts.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/auth/refresh:
+    post:
+      operationId: refreshToken
+      tags: [Auth]
+      summary: Refresh access token
+      description: >
+        Exchange a refresh token for a new access token and a new refresh token
+        (rotation). The previous refresh token is invalidated.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshTokenRequest"
+      responses:
+        "200":
+          description: New token pair issued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshTokenResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/access-tokens:
+    post:
+      operationId: createAccessToken
+      tags: [Access Tokens]
+      summary: Create access token
+      description: >
+        Generate a new Personal Access Token. The token value is only returned
+        once at creation time — store it securely.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTokenRequest"
+      responses:
+        "201":
+          description: Token created.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      operationId: listAccessTokens
+      tags: [Access Tokens]
+      summary: List access tokens
+      description: List all Personal Access Tokens for the authenticated account.
+      responses:
+        "200":
+          description: Token list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/applications:
+    post:
+      operationId: createApplication
+      tags: [Applications]
+      summary: Create application
+      description: >
+        Create a new application. Each application automatically gets an
+        Ethereum wallet and can target the sandbox (Sepolia testnet) or
+        production environment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateApplicationRequest"
+      responses:
+        "201":
+          description: Application created.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      operationId: listApplications
+      tags: [Applications]
+      summary: List applications
+      description: List all applications for the authenticated account.
+      responses:
+        "200":
+          description: Application list.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/applications/{application_id}:
+    parameters:
+      - $ref: "#/components/parameters/ApplicationId"
+    get:
+      operationId: getApplication
+      tags: [Applications]
+      summary: Get application
+      description: Retrieve a single application by ID.
+      responses:
+        "200":
+          description: The application.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: updateApplication
+      tags: [Applications]
+      summary: Update application
+      description: Update mutable fields of an application.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateApplicationRequest"
+      responses:
+        "200":
+          description: Updated application.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteApplication
+      tags: [Applications]
+      summary: Delete application
+      description: Permanently delete an application. This cannot be undone.
+      responses:
+        "204":
+          description: Application deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/applications/{application_id}/tokens:
+    parameters:
+      - $ref: "#/components/parameters/ApplicationId"
+    post:
+      operationId: createApplicationToken
+      tags: [Applications]
+      summary: Create application API key
+      description: >
+        Create a new API key scoped to an application. Sandbox keys are prefixed
+        `tbd_sand_` and production keys `tbd_prod_`. The key value is only
+        returned once at creation time.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAppTokenRequest"
+      responses:
+        "201":
+          description: API key created.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppToken"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    get:
+      operationId: listApplicationTokens
+      tags: [Applications]
+      summary: List application API keys
+      description: List all API keys for an application. Key values are never returned after creation.
+      responses:
+        "200":
+          description: API key list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppTokenList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/applications/{application_id}/wallets:
+    parameters:
+      - $ref: "#/components/parameters/ApplicationId"
+    post:
+      operationId: createWallet
+      tags: [Applications]
+      summary: Create wallet
+      description: >
+        Create a new Ethereum wallet for an application. The encrypted private
+        key is stored server-side and never exposed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWalletRequest"
+      responses:
+        "201":
+          description: Wallet created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    get:
+      operationId: listWallets
+      tags: [Applications]
+      summary: List wallets
+      description: List all wallets for an application.
+      responses:
+        "200":
+          description: Wallet list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/yield/accounts:
+    post:
+      operationId: createYieldAccount
+      tags: [Yield]
+      summary: Create yield account
+      description: >
+        Create a new yield account to start earning interest on cryptocurrency
+        deposits. Funds are automatically routed to the best available protocol
+        (Morpho or Aave) unless a protocol preference is set.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateYieldAccountRequest"
+      responses:
+        "201":
+          description: Yield account created.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YieldAccount"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      operationId: listYieldAccounts
+      tags: [Yield]
+      summary: List yield accounts
+      description: List all yield accounts for the authenticated account.
+      responses:
+        "200":
+          description: Yield account list.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/YieldAccount"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/yield/accounts/{yield_account_id}:
+    parameters:
+      - $ref: "#/components/parameters/YieldAccountId"
+    get:
+      operationId: getYieldAccount
+      tags: [Yield]
+      summary: Get yield account
+      description: Retrieve a single yield account by ID.
+      responses:
+        "200":
+          description: The yield account.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YieldAccount"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/yield/accounts/{yield_account_id}/deposit:
+    parameters:
+      - $ref: "#/components/parameters/YieldAccountId"
+    post:
+      operationId: depositFunds
+      tags: [Yield]
+      summary: Deposit funds
+      description: >
+        Deposit funds into a yield account. Funds immediately begin earning
+        yield at the account's current rate. Fires a `deposit.completed`
+        webhook event on confirmation. No real funds move in this reference
+        implementation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepositRequest"
+      responses:
+        "201":
+          description: Deposit transaction created.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/yield/accounts/{yield_account_id}/withdraw:
+    parameters:
+      - $ref: "#/components/parameters/YieldAccountId"
+    post:
+      operationId: withdrawFunds
+      tags: [Yield]
+      summary: Withdraw funds
+      description: >
+        Withdraw funds from a yield account to a destination address. Fires a
+        `withdrawal.completed` webhook event on confirmation. No real funds
+        move in this reference implementation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WithdrawRequest"
+      responses:
+        "201":
+          description: Withdrawal transaction created.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/yield/rates:
+    get:
+      operationId: getYieldRates
+      tags: [Yield]
+      summary: Get yield rates
+      description: >
+        Get current yield rates (APY) for supported currencies across the
+        Morpho and Aave protocols. Rate limited at 75 requests per minute.
+      parameters:
+        - name: currency
+          in: query
+          required: false
+          description: Filter rates to a single currency.
+          schema:
+            type: string
+            enum: [USDC, USDT, DAI, ETH, WBTC]
+        - name: protocol
+          in: query
+          required: false
+          description: Filter rates to a single protocol.
+          schema:
+            type: string
+            enum: [morpho, aave]
+      responses:
+        "200":
+          description: Current yield rates.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YieldRatesResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/yield/positions:
+    get:
+      operationId: listYieldPositions
+      tags: [Yield]
+      summary: List yield positions
+      description: List active protocol positions for the authenticated account.
+      responses:
+        "200":
+          description: Position list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Position"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/transactions:
+    get:
+      operationId: listTransactions
+      tags: [Yield]
+      summary: List transactions
+      description: List deposit and withdrawal transactions for the authenticated account.
+      responses:
+        "200":
+          description: Transaction list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/markets:
+    get:
+      operationId: listMarkets
+      tags: [Markets]
+      summary: List markets
+      description: >
+        List all available yield markets across the Morpho and Aave protocols
+        with current APYs and network information. Rate limited at 75 requests
+        per minute.
+      parameters:
+        - name: protocol
+          in: query
+          required: false
+          description: Filter markets to a single protocol.
+          schema:
+            type: string
+            enum: [morpho, aave]
+        - name: currency
+          in: query
+          required: false
+          description: Filter markets to a single currency.
+          schema:
+            type: string
+            enum: [USDC, USDT, DAI, ETH, WBTC]
+      responses:
+        "200":
+          description: Market list.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketsResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          description: Upstream protocol data could not be fetched.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/webhooks:
+    post:
+      operationId: createWebhookEndpoint
+      tags: [Webhooks]
+      summary: Create webhook endpoint
+      description: >
+        Register a webhook endpoint to receive real-time event notifications.
+        Deliveries are signed and retried automatically.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWebhookEndpointRequest"
+      responses:
+        "201":
+          description: Webhook endpoint created.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookEndpoint"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      operationId: listWebhookEndpoints
+      tags: [Webhooks]
+      summary: List webhook endpoints
+      description: List all webhook endpoints registered for the authenticated account.
+      responses:
+        "200":
+          description: Webhook endpoint list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookEndpointsList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/webhooks/event-types:
+    get:
+      operationId: listWebhookEventTypes
+      tags: [Webhooks]
+      summary: List event types
+      description: >
+        List all webhook event types available for subscription. This endpoint
+        is public and requires no authentication.
+      security: []
+      responses:
+        "200":
+          description: Available event types.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookEventTypesResponse"
+        "429":
+          description: Rate limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Failed to fetch event types.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/webhooks/{endpoint_id}:
+    parameters:
+      - $ref: "#/components/parameters/WebhookEndpointId"
+    get:
+      operationId: getWebhookEndpoint
+      tags: [Webhooks]
+      summary: Get webhook endpoint
+      description: Retrieve a single webhook endpoint by ID.
+      responses:
+        "200":
+          description: The webhook endpoint.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookEndpoint"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: deleteWebhookEndpoint
+      tags: [Webhooks]
+      summary: Delete webhook endpoint
+      description: Permanently delete a webhook endpoint. This cannot be undone.
+      responses:
+        "204":
+          description: Webhook endpoint deleted.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/webhooks/{endpoint_id}/test:
+    parameters:
+      - $ref: "#/components/parameters/WebhookEndpointId"
+    post:
+      operationId: testWebhookEndpoint
+      tags: [Webhooks]
+      summary: Test webhook endpoint
+      description: Send a test event to verify a webhook endpoint is configured correctly.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestWebhookRequest"
+      responses:
+        "200":
+          description: Test event dispatched.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestWebhookResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/logs:
+    get:
+      operationId: listRequestLogs
+      tags: [Logs]
+      summary: List request logs
+      description: >
+        List API request logs for the authenticated account's applications.
+        Logs are retained for 7 days.
+      parameters:
+        - name: application_id
+          in: query
+          required: false
+          description: Filter by application ID.
+          schema:
+            type: string
+        - name: environment
+          in: query
+          required: false
+          description: Filter by environment.
+          schema:
+            type: string
+            enum: [sandbox, production]
+        - name: method
+          in: query
+          required: false
+          description: Filter by HTTP method.
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          description: Filter by status code or class (e.g. `4xx`).
+          schema:
+            type: string
+        - name: path
+          in: query
+          required: false
+          description: Filter by request path substring.
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          description: Page number (1-based).
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          required: false
+          description: Results per page.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+      responses:
+        "200":
+          description: Paginated request logs with summary stats.
+          headers:
+            X-RateLimit-Limit:
+              $ref: "#/components/headers/X-RateLimit-Limit"
+            X-RateLimit-Remaining:
+              $ref: "#/components/headers/X-RateLimit-Remaining"
+            X-RateLimit-Reset:
+              $ref: "#/components/headers/X-RateLimit-Reset"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestLogsList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/users/register:
+    post:
+      operationId: registerUser
+      tags: [Users]
+      summary: Register user
+      description: >
+        Register a new dashboard user. Returns a short-lived JWT access token
+        (15 minutes) and a refresh token.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterUserRequest"
+      responses:
+        "201":
+          description: User registered.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          description: Email already in use.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/users/login:
+    post:
+      operationId: loginUser
+      tags: [Users]
+      summary: Log in user
+      description: >
+        Authenticate a dashboard user with email and password. If MFA is
+        enabled, the response sets `mfa_required` and a second call with
+        `mfa_code` is required.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Authenticated (or MFA challenge issued).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          description: Account locked after too many failed attempts.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /v1/users/me:
+    get:
+      operationId: getCurrentUser
+      tags: [Users]
+      summary: Get current user
+      description: Get the authenticated user's profile and business memberships.
+      responses:
+        "200":
+          description: Current user profile.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /v1/businesses:
+    post:
+      operationId: createBusiness
+      tags: [Businesses]
+      summary: Create business
+      description: Create a new business workspace owned by the authenticated user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBusinessRequest"
+      responses:
+        "201":
+          description: Business created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Business"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Business slug already exists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    get:
+      operationId: listBusinesses
+      tags: [Businesses]
+      summary: List businesses
+      description: List all businesses the authenticated user is a member of, with roles.
+      responses:
+        "200":
+          description: Business list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessList"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/resources/{resource_type}/{resource_id}/access:
+    parameters:
+      - name: resource_type
+        in: path
+        required: true
+        description: The type of resource (e.g. `application`, `yield_account`).
+        schema:
+          type: string
+      - name: resource_id
+        in: path
+        required: true
+        description: The resource's unique identifier.
+        schema:
+          type: string
+    get:
+      operationId: listResourceAccess
+      tags: [Resource Access]
+      summary: List access grants
+      description: >
+        List all access grants for a resource. Requires admin permission on
+        the resource.
+      responses:
+        "200":
+          description: Access grant list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ResourceAccess"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: Admin permission required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: grantResourceAccess
+      tags: [Resource Access]
+      summary: Grant access
+      description: >
+        Grant a user or role access to a resource. Provide exactly one of
+        `user_id` or `role_id`. Requires admin permission on the resource.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GrantAccessRequest"
+      responses:
+        "201":
+          description: Access granted.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceAccess"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          description: Admin permission required.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: |
+        All authenticated endpoints accept `Authorization: Bearer <token>` with
+        one of:
+
+        - **Application API keys** — long-lived keys scoped to an application
+          and environment. Sandbox keys are prefixed `tbd_sand_` and production
+          keys `tbd_prod_`. Legacy personal keys use the `sk_live_` prefix.
+        - **Short-lived JWTs** — 15-minute access tokens issued by
+          `/v1/auth/authenticate` or `/v1/users/login`, refreshed via
+          `/v1/auth/refresh` with rotating refresh tokens.
+
+  parameters:
+    ApplicationId:
+      name: application_id
+      in: path
+      required: true
+      description: The application's unique identifier.
+      schema:
+        type: string
+        example: app_1234567890abcdef
+    YieldAccountId:
+      name: yield_account_id
+      in: path
+      required: true
+      description: The yield account's unique identifier.
+      schema:
+        type: string
+        example: ya_1234567890abcdef
+    WebhookEndpointId:
+      name: endpoint_id
+      in: path
+      required: true
+      description: The webhook endpoint's unique identifier.
+      schema:
+        type: string
+        example: ep_1234567890abcdef
+
+  headers:
+    X-RateLimit-Limit:
+      description: Maximum number of requests allowed in the current window (per minute).
+      schema:
+        type: integer
+        example: 100
+    X-RateLimit-Remaining:
+      description: Requests remaining in the current window.
+      schema:
+        type: integer
+        example: 97
+    X-RateLimit-Reset:
+      description: Unix timestamp (seconds) when the current window resets.
+      schema:
+        type: integer
+        example: 1736938800
+
+  responses:
+    BadRequest:
+      description: The request was invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              code: INVALID_REQUEST
+              message: Invalid request
+              type: invalid_request_error
+              param: null
+    Unauthorized:
+      description: Authentication failed or was not provided.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              code: UNAUTHORIZED
+              message: Invalid or missing authentication token
+              type: authentication_error
+              param: null
+    NotFound:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error:
+              code: NOT_FOUND
+              message: Resource not found
+              type: not_found_error
+              param: null
+
+  schemas:
+    Error:
+      type: object
+      description: Stripe-style error envelope returned by all error responses.
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, type]
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code (e.g. `INVALID_CREDENTIALS`).
+              example: INVALID_REQUEST
+            message:
+              type: string
+              description: Human-readable explanation of the error.
+              example: Invalid request
+            type:
+              type: string
+              description: Error category.
+              enum:
+                - invalid_request_error
+                - authentication_error
+                - authorization_error
+                - not_found_error
+                - validation_error
+                - server_error
+                - internal_error
+              example: invalid_request_error
+            param:
+              type: ["string", "null"]
+              description: The request parameter that caused the error, if applicable.
+              example: null
+
+    Money:
+      type: object
+      required: [amount, currency]
+      properties:
+        amount:
+          type: string
+          description: Decimal amount as a string (e.g. "1000.00").
+          pattern: '^[0-9]+(\.[0-9]{1,18})?$'
+          example: "1000.00"
+        currency:
+          type: string
+          enum: [USDC, USDT, DAI, ETH, WBTC]
+          example: USDC
+
+    HealthResponse:
+      type: object
+      required: [status, timestamp]
+      properties:
+        status:
+          type: string
+          example: healthy
+        timestamp:
+          type: string
+          example: "1736938800000"
+        version:
+          type: string
+          example: "1.0.0"
+
+    CreateAccountRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+          pattern: "^[a-zA-Z0-9_]+$"
+          example: developer123
+        password:
+          type: string
+          minLength: 8
+          format: password
+        email:
+          type: string
+          format: email
+          example: developer@example.com
+
+    Account:
+      type: object
+      required: [account_id, username, created_at, status]
+      properties:
+        account_id:
+          type: string
+          example: acc_1234567890abcdef
+        username:
+          type: string
+          example: developer123
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        status:
+          type: string
+          example: active
+
+    AuthenticateRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          example: developer123
+        password:
+          type: string
+          format: password
+
+    AuthenticateResponse:
+      type: object
+      required: [access_token, refresh_token, token_type, expires_in, account_id]
+      properties:
+        access_token:
+          type: string
+          description: Short-lived access token (15 minutes).
+        refresh_token:
+          type: string
+          description: Refresh token. Rotates on every refresh.
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: integer
+          description: Access token lifetime in seconds.
+          example: 900
+        account_id:
+          type: string
+          example: acc_1234567890abcdef
+
+    RefreshTokenRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token:
+          type: string
+
+    RefreshTokenResponse:
+      type: object
+      required: [access_token, refresh_token, token_type, expires_in]
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+          description: New refresh token; the previous one is invalidated.
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: integer
+          example: 900
+
+    CreateTokenRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: A descriptive name to identify this token later.
+          example: Production API Key
+        expires_in:
+          type: integer
+          minimum: 3600
+          maximum: 31536000
+          description: Token lifetime in seconds. Omit for a non-expiring token.
+          example: 31536000
+
+    Token:
+      type: object
+      required: [token_id, access_token, name, created_at]
+      properties:
+        token_id:
+          type: string
+          example: tok_1234567890abcdef
+        access_token:
+          type: string
+          description: The token value. Only returned once, at creation time.
+          example: sk_live_1234567890abcdef
+        name:
+          type: string
+          example: Production API Key
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        expires_at:
+          type: ["string", "null"]
+          format: date-time
+          example: null
+
+    TokenList:
+      type: object
+      required: [tokens]
+      properties:
+        tokens:
+          type: array
+          items:
+            $ref: "#/components/schemas/Token"
+
+    CreateApplicationRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: My Production App
+        description:
+          type: string
+          maxLength: 500
+          example: Production application for mainnet
+        environment:
+          type: string
+          enum: [sandbox, production, both]
+          description: Target environment. Defaults to `both`.
+        webhook_url:
+          type: string
+          format: uri
+          description: HTTPS URL where webhook events are sent.
+          example: https://myapp.com/webhooks
+        allowed_origins:
+          type: array
+          items:
+            type: string
+          description: Allowed CORS origins for this application's API keys.
+          example: ["https://myapp.com"]
+        permissions:
+          type: array
+          items:
+            type: string
+            enum: ["yield:read", "yield:write", "wallet:read", "wallet:write", "transaction:read", "transaction:write"]
+          description: Permission strings. Omit for all available permissions.
+        sandbox_rpc_url:
+          type: string
+          format: uri
+          description: Ethereum RPC URL for the sandbox (Sepolia) environment.
+          example: https://sepolia.infura.io/v3/YOUR_KEY
+        production_rpc_url:
+          type: string
+          format: uri
+          description: Ethereum RPC URL for the production (mainnet) environment.
+          example: https://mainnet.infura.io/v3/YOUR_KEY
+
+    UpdateApplicationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          maxLength: 500
+        webhook_url:
+          type: string
+          format: uri
+        allowed_origins:
+          type: array
+          items:
+            type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [active, disabled]
+        sandbox_rpc_url:
+          type: string
+          format: uri
+        production_rpc_url:
+          type: string
+          format: uri
+
+    Application:
+      type: object
+      required: [application_id, name, environment, status, created_at]
+      properties:
+        application_id:
+          type: string
+          example: app_1234567890abcdef
+        name:
+          type: string
+          example: My Production App
+        description:
+          type: ["string", "null"]
+          example: Production application for mainnet
+        environment:
+          type: string
+          enum: [sandbox, production, both]
+          example: production
+        status:
+          type: string
+          example: active
+        webhook_url:
+          type: ["string", "null"]
+          example: https://myapp.com/webhooks
+        webhook_secret:
+          type: ["string", "null"]
+          description: Secret used to sign webhook deliveries.
+          example: whsec_abc123
+        allowed_origins:
+          type: ["array", "null"]
+          items:
+            type: string
+          example: ["https://myapp.com"]
+        permissions:
+          type: ["array", "null"]
+          items:
+            type: string
+          example: ["yield:read", "yield:write"]
+        sandbox_rpc_url:
+          type: ["string", "null"]
+        production_rpc_url:
+          type: ["string", "null"]
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        updated_at:
+          type: ["string", "null"]
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+
+    ApplicationList:
+      type: object
+      required: [applications]
+      properties:
+        applications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Application"
+
+    CreateAppTokenRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: Production Server Key
+        environment:
+          type: string
+          enum: [sandbox, production]
+          description: Environment this key is valid for.
+        expires_in:
+          type: integer
+          minimum: 3600
+          maximum: 31536000
+          description: Key lifetime in seconds. Omit for a non-expiring key.
+        permissions:
+          type: array
+          items:
+            type: string
+          description: Permission strings. Omit to inherit the application's permissions.
+
+    AppToken:
+      type: object
+      required: [token_id, application_id, access_token, name, environment, created_at]
+      properties:
+        token_id:
+          type: string
+          example: tok_1234567890abcdef
+        application_id:
+          type: string
+          example: app_1234567890abcdef
+        access_token:
+          type: string
+          description: >
+            The API key value. Only returned once, at creation time. Prefixed
+            `tbd_sand_` for sandbox keys and `tbd_prod_` for production keys.
+          example: tbd_prod_1234567890abcdef
+        name:
+          type: string
+          example: Production Server Key
+        environment:
+          type: string
+          enum: [sandbox, production]
+          example: production
+        permissions:
+          type: ["array", "null"]
+          items:
+            type: string
+          example: null
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        expires_at:
+          type: ["string", "null"]
+          format: date-time
+          example: null
+        last_used_at:
+          type: ["string", "null"]
+          format: date-time
+          example: null
+
+    AppTokenList:
+      type: object
+      required: [tokens]
+      properties:
+        tokens:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppToken"
+
+    CreateWalletRequest:
+      type: object
+      properties:
+        label:
+          type: string
+          maxLength: 100
+          description: Optional human-readable label for this wallet.
+          example: Secondary Wallet
+        chain:
+          type: string
+          enum: [ethereum]
+          default: ethereum
+
+    Wallet:
+      type: object
+      required: [wallet_id, address, environment, chain, status, created_at]
+      properties:
+        wallet_id:
+          type: string
+          example: wal_1234567890abcdef
+        address:
+          type: string
+          pattern: "^0x[a-fA-F0-9]{40}$"
+          example: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1"
+        environment:
+          type: string
+          enum: [sandbox, production]
+          example: sandbox
+        chain:
+          type: string
+          example: ethereum
+        label:
+          type: ["string", "null"]
+          example: Primary Wallet
+        status:
+          type: string
+          example: active
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+
+    WalletList:
+      type: object
+      required: [wallets]
+      properties:
+        wallets:
+          type: array
+          items:
+            $ref: "#/components/schemas/Wallet"
+
+    CreateYieldAccountRequest:
+      type: object
+      required: [currency]
+      properties:
+        currency:
+          type: string
+          enum: [USDC, USDT, DAI, ETH, WBTC]
+          description: The cryptocurrency for this yield account.
+          example: USDC
+        initial_deposit:
+          $ref: "#/components/schemas/Money"
+        protocol_preference:
+          type: string
+          enum: [auto, morpho, aave]
+          default: auto
+          description: >
+            Preferred DeFi protocol. Use `auto` to route to the best available
+            protocol based on current rates.
+
+    YieldAccount:
+      type: object
+      required: [account_id, currency, protocol, annual_yield_rate, status, created_at, balance]
+      properties:
+        account_id:
+          type: string
+          example: ya_1234567890abcdef
+        currency:
+          type: string
+          enum: [USDC, USDT, DAI, ETH, WBTC]
+          example: USDC
+        protocol:
+          type: string
+          enum: [morpho, aave]
+          example: morpho
+        annual_yield_rate:
+          type: number
+          format: double
+          example: 0.06
+        status:
+          type: string
+          enum: [active, paused, closed, pending]
+          example: active
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        balance:
+          $ref: "#/components/schemas/Money"
+
+    DepositRequest:
+      type: object
+      required: [amount, currency]
+      properties:
+        amount:
+          type: string
+          pattern: '^[0-9]+(\.[0-9]{1,18})?$'
+          description: Deposit amount as a decimal string.
+          example: "1000.00"
+        currency:
+          type: string
+          enum: [USDC, USDT, DAI, ETH, WBTC]
+          description: Must match the yield account's currency.
+          example: USDC
+        source_address:
+          type: string
+          pattern: "^0x[a-fA-F0-9]{40}$"
+          description: Optional source wallet address for the deposit.
+
+    WithdrawRequest:
+      type: object
+      required: [amount, currency, destination_address]
+      properties:
+        amount:
+          type: string
+          pattern: '^[0-9]+(\.[0-9]{1,18})?$'
+          description: Withdrawal amount as a decimal string. Cannot exceed available balance.
+          example: "500.00"
+        currency:
+          type: string
+          enum: [USDC, USDT, DAI, ETH, WBTC]
+          description: Must match the yield account's currency.
+          example: USDC
+        destination_address:
+          type: string
+          pattern: "^0x[a-fA-F0-9]{40}$"
+          description: Ethereum-compatible address to receive the funds.
+          example: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb1"
+
+    Transaction:
+      type: object
+      required: [transaction_id, account_id, amount, status, created_at]
+      properties:
+        transaction_id:
+          type: string
+          example: txn_1234567890abcdef
+        account_id:
+          type: string
+          example: ya_1234567890abcdef
+        amount:
+          $ref: "#/components/schemas/Money"
+        status:
+          type: string
+          enum: [pending, completed, failed]
+          example: pending
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        destination_address:
+          type: ["string", "null"]
+          description: Present on withdrawal transactions.
+          example: null
+
+    Position:
+      type: object
+      description: An active protocol position backing a yield account.
+      properties:
+        yield_account_id:
+          type: string
+          example: ya_1234567890abcdef
+        protocol:
+          type: string
+          enum: [morpho, aave]
+          example: morpho
+        currency:
+          type: string
+          example: USDC
+        balance:
+          $ref: "#/components/schemas/Money"
+
+    YieldRate:
+      type: object
+      required: [currency, protocol, network, annual_yield_rate, apy, updated_at]
+      properties:
+        currency:
+          type: string
+          example: USDC
+        protocol:
+          type: string
+          enum: [morpho, aave]
+          example: morpho
+        network:
+          type: string
+          enum: [ethereum_mainnet, ethereum_sepolia]
+          example: ethereum_mainnet
+        annual_yield_rate:
+          type: number
+          format: double
+          example: 0.044
+        apy:
+          type: number
+          format: double
+          example: 0.044
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        note:
+          type: ["string", "null"]
+          description: Set when no active markets exist for this pair.
+          example: null
+
+    YieldRatesResponse:
+      type: object
+      required: [rates]
+      properties:
+        rates:
+          type: array
+          items:
+            $ref: "#/components/schemas/YieldRate"
+
+    Market:
+      type: object
+      required: [market_id, protocol, currency, network, apy, updated_at]
+      properties:
+        market_id:
+          type: string
+          example: morpho_usdc_eth
+        protocol:
+          type: string
+          enum: [morpho, aave]
+          example: morpho
+        currency:
+          type: string
+          example: USDC
+        currency_address:
+          type: ["string", "null"]
+          example: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+        network:
+          type: string
+          enum: [ethereum_mainnet, ethereum_sepolia]
+          example: ethereum_mainnet
+        apy:
+          type: number
+          format: double
+          example: 0.044
+        status:
+          type: string
+          default: active
+          example: active
+        updated_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+
+    MarketsResponse:
+      type: object
+      required: [markets]
+      properties:
+        markets:
+          type: array
+          items:
+            $ref: "#/components/schemas/Market"
+
+    CreateWebhookEndpointRequest:
+      type: object
+      required: [url]
+      properties:
+        url:
+          type: string
+          format: uri
+          description: HTTPS URL that will receive webhook events.
+          example: https://your-server.com/webhooks
+        description:
+          type: string
+          example: Production webhook endpoint
+        filter_types:
+          type: array
+          items:
+            type: string
+            enum:
+              - deposit.completed
+              - withdrawal.completed
+              - yield.accrued
+              - rate.changed
+              - account.status.changed
+              - application.created
+              - api_key.created
+          description: Event types to subscribe to. Omit to receive all events.
+          example: ["deposit.completed", "withdrawal.completed"]
+
+    WebhookEndpoint:
+      type: object
+      required: [id, url, disabled]
+      properties:
+        id:
+          type: string
+          example: ep_1234567890abcdef
+        url:
+          type: string
+          format: uri
+          example: https://your-server.com/webhooks
+        description:
+          type: ["string", "null"]
+          example: Production webhook endpoint
+        filter_types:
+          type: ["array", "null"]
+          items:
+            type: string
+          example: ["deposit.completed", "withdrawal.completed"]
+        created_at:
+          type: ["string", "null"]
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        updated_at:
+          type: ["string", "null"]
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        disabled:
+          type: boolean
+          example: false
+
+    WebhookEndpointsList:
+      type: object
+      required: [endpoints, total]
+      properties:
+        endpoints:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebhookEndpoint"
+        total:
+          type: integer
+          example: 1
+
+    WebhookEventTypesResponse:
+      type: object
+      required: [event_types]
+      properties:
+        event_types:
+          type: array
+          items:
+            type: object
+            required: [name, description]
+            properties:
+              name:
+                type: string
+                example: deposit.completed
+              description:
+                type: string
+                example: Triggered when funds are successfully deposited to a yield account
+
+    TestWebhookRequest:
+      type: object
+      required: [event_type]
+      properties:
+        event_type:
+          type: string
+          enum:
+            - deposit.completed
+            - withdrawal.completed
+            - yield.accrued
+            - rate.changed
+            - account.status.changed
+            - application.created
+            - api_key.created
+          example: deposit.completed
+
+    TestWebhookResponse:
+      type: object
+      required: [success, message]
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Test webhook sent successfully
+
+    RequestLog:
+      type: object
+      required: [id, request_id, environment, method, path, status_code, duration_ms, timestamp]
+      properties:
+        id:
+          type: string
+        request_id:
+          type: string
+          example: req_1234567890abcdef
+        application_id:
+          type: ["string", "null"]
+          example: app_1234567890abcdef
+        application_name:
+          type: ["string", "null"]
+          example: My Production App
+        environment:
+          type: string
+          enum: [sandbox, production]
+          example: production
+        method:
+          type: string
+          example: POST
+        path:
+          type: string
+          example: /v1/yield/accounts
+        status_code:
+          type: integer
+          example: 201
+        duration_ms:
+          type: integer
+          example: 42
+        ip_address:
+          type: ["string", "null"]
+        user_agent:
+          type: ["string", "null"]
+        request_body:
+          type: ["string", "null"]
+        response_body:
+          type: ["string", "null"]
+        error_message:
+          type: ["string", "null"]
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+
+    RequestLogStats:
+      type: object
+      required: [total_requests_7d, success_rate, avg_duration_ms, errors_24h]
+      properties:
+        total_requests_7d:
+          type: integer
+          example: 1204
+        success_rate:
+          type: number
+          format: double
+          example: 0.992
+        avg_duration_ms:
+          type: integer
+          example: 87
+        errors_24h:
+          type: integer
+          example: 3
+
+    RequestLogsList:
+      type: object
+      required: [logs, total, page, page_size, stats]
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: "#/components/schemas/RequestLog"
+        total:
+          type: integer
+          example: 1204
+        page:
+          type: integer
+          example: 1
+        page_size:
+          type: integer
+          example: 50
+        stats:
+          $ref: "#/components/schemas/RequestLogStats"
+
+    RegisterUserRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: developer@example.com
+        password:
+          type: string
+          minLength: 8
+          format: password
+        first_name:
+          type: string
+          example: Ada
+        last_name:
+          type: string
+          example: Lovelace
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: developer@example.com
+        password:
+          type: string
+          format: password
+        mfa_code:
+          type: string
+          description: Required on the second call when MFA is enabled.
+
+    LoginResponse:
+      type: object
+      required: [access_token, refresh_token, token_type, expires_in, user]
+      properties:
+        access_token:
+          type: string
+          description: Short-lived JWT access token (15 minutes).
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: integer
+          example: 900
+        user:
+          $ref: "#/components/schemas/User"
+        mfa_required:
+          type: boolean
+          default: false
+
+    User:
+      type: object
+      required: [id, email, status, email_verified, mfa_enabled, created_at]
+      properties:
+        id:
+          type: string
+          example: usr_1234567890abcdef
+        email:
+          type: string
+          format: email
+          example: developer@example.com
+        first_name:
+          type: ["string", "null"]
+          example: Ada
+        last_name:
+          type: ["string", "null"]
+          example: Lovelace
+        avatar_url:
+          type: ["string", "null"]
+        status:
+          type: string
+          example: active
+        email_verified:
+          type: boolean
+          example: true
+        mfa_enabled:
+          type: boolean
+          example: false
+        last_login_at:
+          type: ["string", "null"]
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        updated_at:
+          type: ["string", "null"]
+          format: date-time
+
+    UserProfile:
+      type: object
+      required: [user, businesses]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        businesses:
+          type: array
+          items:
+            $ref: "#/components/schemas/BusinessWithRoles"
+
+    CreateBusinessRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          example: Acme Treasury
+        slug:
+          type: string
+          description: URL-safe identifier. Generated from the name if omitted.
+          example: acme-treasury
+        description:
+          type: string
+        website:
+          type: string
+          format: uri
+
+    Business:
+      type: object
+      required: [id, name, slug, plan, status, owner_id, created_at]
+      properties:
+        id:
+          type: string
+          example: biz_1234567890abcdef
+        name:
+          type: string
+          example: Acme Treasury
+        slug:
+          type: string
+          example: acme-treasury
+        logo_url:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        website:
+          type: ["string", "null"]
+        plan:
+          type: string
+          example: free
+        status:
+          type: string
+          example: active
+        owner_id:
+          type: string
+          example: usr_1234567890abcdef
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        updated_at:
+          type: ["string", "null"]
+          format: date-time
+
+    RoleInfo:
+      type: object
+      required: [id, name, display_name, is_system]
+      properties:
+        id:
+          type: string
+          example: role_1234567890abcdef
+        name:
+          type: string
+          example: admin
+        display_name:
+          type: string
+          example: Administrator
+        color:
+          type: ["string", "null"]
+          example: "#8b5cf6"
+        is_system:
+          type: boolean
+          example: true
+
+    BusinessWithRoles:
+      type: object
+      required: [id, name, slug, plan, status, is_owner, roles, created_at]
+      properties:
+        id:
+          type: string
+          example: biz_1234567890abcdef
+        name:
+          type: string
+          example: Acme Treasury
+        slug:
+          type: string
+          example: acme-treasury
+        logo_url:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        website:
+          type: ["string", "null"]
+        plan:
+          type: string
+          example: free
+        status:
+          type: string
+          example: active
+        is_owner:
+          type: boolean
+          example: true
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/RoleInfo"
+        created_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        updated_at:
+          type: ["string", "null"]
+          format: date-time
+
+    BusinessList:
+      type: object
+      required: [businesses]
+      properties:
+        businesses:
+          type: array
+          items:
+            $ref: "#/components/schemas/BusinessWithRoles"
+
+    GrantAccessRequest:
+      type: object
+      required: [permission]
+      properties:
+        user_id:
+          type: string
+          description: User to grant access to. Provide exactly one of `user_id` or `role_id`.
+        role_id:
+          type: string
+          description: Role to grant access to. Provide exactly one of `user_id` or `role_id`.
+        permission:
+          type: string
+          enum: [read, write, admin]
+          example: read
+        reason:
+          type: string
+          description: Optional audit note explaining the grant.
+        expires_at:
+          type: string
+          format: date-time
+          description: Optional expiry for the grant.
+
+    ResourceAccess:
+      type: object
+      required: [id, resource_type, resource_id, permission, granted_by, granted_at]
+      properties:
+        id:
+          type: string
+        resource_type:
+          type: string
+          example: application
+        resource_id:
+          type: string
+        user_id:
+          type: ["string", "null"]
+        user_email:
+          type: ["string", "null"]
+          example: teammate@example.com
+        role_id:
+          type: ["string", "null"]
+        role_name:
+          type: ["string", "null"]
+        role_display_name:
+          type: ["string", "null"]
+        permission:
+          type: string
+          enum: [read, write, admin]
+          example: read
+        granted_by:
+          type: string
+        granted_at:
+          type: string
+          format: date-time
+          example: "2025-01-15T10:30:00Z"
+        expires_at:
+          type: ["string", "null"]
+          format: date-time
+          example: null

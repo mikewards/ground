@@ -1,1 +1,1 @@
-rootProject.name = "ground-api"
+rootProject.name = "yield-api"

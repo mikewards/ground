@@ -1,6 +1,6 @@
 # Railway Deployment Guide
 
-Complete guide for deploying the Ground API to Railway with separate staging and production environments.
+Complete guide for deploying the Yield API to Railway with separate staging and production environments.
 
 **Last Updated**: December 2025
 

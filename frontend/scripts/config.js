@@ -6,7 +6,7 @@
     
     // API URLs for different environments
     // Using Railway URLs (working endpoints)
-    // TODO: Update to api.ground.com / api-sandbox.ground.com when DNS is configured
+    // TODO: Update to api.example.com / api-sandbox.example.com when DNS is configured
     const API_URLS = {
         local: 'http://localhost:8080',
         sandbox: 'https://flow-platform-flow-platform-staging.up.railway.app',

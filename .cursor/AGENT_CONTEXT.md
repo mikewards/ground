@@ -6,7 +6,7 @@ Paste this into a new agent when starting work on this project.
 
 ## Overview
 
-Flow Platform (also called "Ground Platform") is a DeFi API platform providing a unified REST API for yield generation across Morpho and Aave protocols. It abstracts protocol complexity and handles compliance.
+Flow Platform (now the Yield API Platform) is a DeFi API platform providing a unified REST API for yield generation across Morpho and Aave protocols. It abstracts protocol complexity and handles compliance.
 
 **GitHub:** https://github.com/mikewards/flow-platform
 
@@ -15,7 +15,7 @@ Flow Platform (also called "Ground Platform") is a DeFi API platform providing a
 **Deployments:**
 - Production API: `flow-platform-production.up.railway.app`
 - Staging API: `flow-platform-flow-platform-staging.up.railway.app`
-- Frontend: Cloudflare Pages (`ground-platform`)
+- Frontend: Cloudflare Workers (`tbd`)
 
 ## Directory Structure
 

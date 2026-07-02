@@ -324,18 +324,18 @@
     }
     
     /* Signal ground icons in links - mobile sizing */
-    .signal-ground-icon {
+    .signal-arrow-icon {
         margin-left: 3px;
         flex-shrink: 0;
     }
     
-    .signal-ground-icon svg {
+    .signal-arrow-icon svg {
         width: 12px;
         height: 15px;
     }
     
     /* QS link cards - ensure signal ground icons work */
-    .qs-link-card h3 .signal-ground-icon svg {
+    .qs-link-card h3 .signal-arrow-icon svg {
         width: 14px;
         height: 18px;
     }
@@ -371,11 +371,11 @@
     }
     
     /* Signal ground icons in links - mobile sizing */
-    .signal-ground-icon {
+    .signal-arrow-icon {
         margin-left: 3px;
     }
     
-    .signal-ground-icon svg {
+    .signal-arrow-icon svg {
         width: 12px;
         height: 15px;
     }
