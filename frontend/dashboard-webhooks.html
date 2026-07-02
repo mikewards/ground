@@ -619,7 +619,7 @@
         // Load webhook portal info
         let portalUrl = null;
         async function loadPortalInfo() {
-            const token = checkAuth();
+            const token = await checkAuth();
             if (!token) return;
 
             try {
@@ -705,7 +705,7 @@
 
         // Load webhooks
         async function loadWebhooks() {
-            const token = checkAuth();
+            const token = await checkAuth();
             if (!token) return;
 
             const container = document.getElementById('webhooksContainer');
@@ -804,7 +804,7 @@
         // Create webhook
         async function createWebhook(e) {
             e.preventDefault();
-            const token = checkAuth();
+            const token = await checkAuth();
             if (!token) return;
 
             const url = document.getElementById('webhookUrl').value;
@@ -847,7 +847,7 @@
                 return;
             }
 
-            const token = checkAuth();
+            const token = await checkAuth();
             if (!token) return;
 
             try {
@@ -879,7 +879,7 @@
         // Send test webhook
         async function sendTestWebhook(e) {
             e.preventDefault();
-            const token = checkAuth();
+            const token = await checkAuth();
             if (!token || !currentTestEndpointId) return;
 
             const eventType = document.getElementById('testEventType').value;
