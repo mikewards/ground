@@ -13,6 +13,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.web3j.abi.FunctionEncoder
@@ -52,7 +53,8 @@ data class MorphoMarketsResponse(
 
 @Serializable
 data class MorphoMarket(
-    val id: String? = null,
+    // The Morpho Blue API renamed Market.id to Market.marketId (mid-2026)
+    @SerialName("marketId") val id: String? = null,
     val loanAsset: MorphoAsset? = null,
     val collateralAsset: MorphoAsset? = null,
     val state: MorphoMarketState? = null
@@ -75,6 +77,11 @@ data class MorphoError(
 )
 
 class MorphoClient {
+    companion object {
+        // Markets reporting above 50% supply APY are illiquid outliers
+        const val MAX_PLAUSIBLE_APY = 0.50
+    }
+
     private val config = ConfigFactory.load()
     private val graphqlUrl = "https://blue-api.morpho.org/graphql"
     private val web3Service = Web3Service()
@@ -101,7 +108,7 @@ class MorphoClient {
                     query GetMarkets {
                         markets {
                             items {
-                                id
+                                marketId
                                 loanAsset {
                                     symbol
                                     address
@@ -127,12 +134,14 @@ class MorphoClient {
                 } ?: emptyList()
                 
                 // Find the market with the highest APY (best rate for users)
-                // Filter out null/zero rates only
-                // APY values are in decimal format (0.06 = 6%, 1.0 = 100%)
+                // APY values are in decimal format (0.06 = 6%, 1.0 = 100%).
+                // Cap at 50%: tiny illiquid markets can report absurd APYs
+                // (hundreds of thousands of percent) that no depositor could
+                // actually earn - exclude them from "best rate".
                 val bestMarket = matchingMarkets
                     .mapNotNull { market ->
                         val apy = market.state?.supplyApy
-                        if (apy != null && apy > 0.0) {
+                        if (apy != null && apy > 0.0 && apy <= MAX_PLAUSIBLE_APY) {
                             Pair(market, apy)
                         } else {
                             null
@@ -169,7 +178,7 @@ class MorphoClient {
                     query GetMarkets {
                         markets {
                             items {
-                                id
+                                marketId
                                 loanAsset {
                                     symbol
                                     address
@@ -196,9 +205,12 @@ class MorphoClient {
                     throw Exception("Morpho GraphQL errors: ${response.errors.joinToString { it.message }}")
                 }
                 
-                // Return all markets with active APY
+                // Return all markets with active, plausible APY
                 response.data?.markets?.items
-                    ?.filter { it.state?.supplyApy != null && it.state.supplyApy > 0.0 }
+                    ?.filter {
+                        val apy = it.state?.supplyApy
+                        apy != null && apy > 0.0 && apy <= MAX_PLAUSIBLE_APY
+                    }
                     ?: emptyList()
             } catch (e: Exception) {
                 println("⚠️ Morpho API error listing markets: ${e.message}")
